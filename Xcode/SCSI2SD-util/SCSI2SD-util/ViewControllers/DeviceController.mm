@@ -61,7 +61,7 @@
     self.scsiIdErrorText.stringValue = @"";
 }
 
-- (void) setTargetConfig: (TargetConfig)config
+- (void) setTargetConfig: (S2S_TargetCfg)config
 {
     // NSLog(@"setTargetConfig");
     self.enableSCSITarget.state = (config.scsiId & 0x80) ? NSOnState : NSOffState;
@@ -86,16 +86,16 @@
 
 - (void) setTargetConfigData: (NSData *)data
 {
-    TargetConfig config;
+    S2S_TargetCfg config;
     const void *bytes;
     bytes = [data bytes];
-    memcpy(&config, bytes, sizeof(TargetConfig));
+    memcpy(&config, bytes, sizeof(S2S_TargetCfg));
     [self setTargetConfig: config];
 }
 
-- (TargetConfig) getTargetConfig
+- (S2S_TargetCfg) getTargetConfig
 {
-    TargetConfig targetConfig;
+    S2S_TargetCfg targetConfig;
     
     NSLog(@"getTargetConfig");
     targetConfig.scsiId = self.SCSIID.intValue + self.enableSCSITarget.state == NSOnState ? 0x80 : 0x0;
@@ -113,7 +113,7 @@
 
 - (NSString *) toXml
 {
-    TargetConfig config = [self getTargetConfig];
+    S2S_TargetCfg config = [self getTargetConfig];
     std::string str = SCSI2SD::ConfigUtil::toXML(config);
     NSString *result = [NSString stringWithCString:str.c_str() encoding:NSUTF8StringEncoding];
     return result;

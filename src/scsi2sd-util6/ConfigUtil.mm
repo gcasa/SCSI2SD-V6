@@ -20,17 +20,23 @@
 #include <limits>
 #include <sstream>
 #include <stdexcept>
-
 #include <string.h>
 
-#include <wx/wxprec.h>
-#ifndef WX_PRECOMP
-#include <wx/wx.h>
-#endif
-#include <wx/base64.h>
-#include <wx/buffer.h>
-#include <wx/xml/xml.h>
+#import <Foundation/NSXMLNode.h>
+#import <Foundation/NSXMLDocument.h>
+#import <Foundation/NSData.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSXMLElement.h>
 
+#import <Base64/MF_Base64Additions.h>
+
+// #include <wx/wxprec.h>
+// #ifndef WX_PRECOMP
+// #include <wx/wx.h>
+// #endif
+// #include <wx/base64.h>
+// #include <wx/buffer.h>
+// #include <wx/xml/xml.h>
 
 using namespace SCSI2SD;
 
@@ -390,12 +396,12 @@ ConfigUtil::toXML(const S2S_BoardCfg& config)
 }
 
 
-static uint64_t parseInt(wxXmlNode* node, uint64_t limit)
+static uint64_t parseInt(NSXMLNode* node, uint64_t limit)
 {
-	std::string str(node->GetNodeContent().mb_str());
-	if (str.empty())
+    std::string str([[node stringValue] cStringUsingEncoding:NSUTF8StringEncoding]);
+    if (str.empty())
 	{
-		throw std::runtime_error("Empty " + node->GetName());
+		throw std::runtime_error("Empty XML node");
 	}
 
 	std::stringstream s;
@@ -412,38 +418,41 @@ static uint64_t parseInt(wxXmlNode* node, uint64_t limit)
 	s >> result;
 	if (!s)
 	{
-		throw std::runtime_error("Invalid value for " + node->GetName());
+		throw std::runtime_error("Invalid value");
 	}
 
 	if (result > limit)
 	{
 		std::stringstream msg;
-		msg << "Invalid value for " << node->GetName() <<
-			" (max=" << limit << ")";
+        msg << "Invalid value";
 		throw std::runtime_error(msg.str());
 	}
 	return result;
 }
 
 static S2S_TargetCfg
-parseTarget(wxXmlNode* node)
+parseTarget(NSXMLElement* node)
 {
 	int id;
 	{
 		std::stringstream s;
-		s << node->GetAttribute("id", "7");
+		s <<  [node attributeForName:@"id"];
 		s >> id;
 		if (!s) throw std::runtime_error("Could not parse SCSITarget id attr");
 	}
 	S2S_TargetCfg result = ConfigUtil::Default(id & 0x7);
 
-	wxXmlNode *child = node->GetChildren();
+    NSArray *children = [node children];
+    NSEnumerator *en = [children objectEnumerator];
+    NSXMLNode *child = [en nextObject];
 	while (child)
 	{
-		if (child->GetName() == "enabled")
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wconversion"
+        if ([[child name] isEqualToString: @"enabled"])
 		{
-			std::string s(child->GetNodeContent().mb_str());
-			if (s == "true")
+            NSString *s = [child stringValue];
+            if ([s isEqualToString: @"true"])
 			{
 				result.scsiId |= S2S_CFG_TARGET_ENABLED;
 			}
@@ -452,10 +461,10 @@ parseTarget(wxXmlNode* node)
 				result.scsiId = result.scsiId & ~S2S_CFG_TARGET_ENABLED;
 			}
 		}
-		else if (child->GetName() == "quirks")
-		{
-			std::stringstream s(std::string(child->GetNodeContent().mb_str()));
-			std::string quirk;
+        else if ([[child name] isEqualToString: @"quirks"])
+        {
+            std::stringstream s((std::string([[child stringValue] cStringUsingEncoding:NSUTF8StringEncoding])));
+            std::string quirk;
 			while (s >> quirk)
 			{
 				if (quirk == "apple")
@@ -476,88 +485,90 @@ parseTarget(wxXmlNode* node)
 				}
 			}
 		}
-		else if (child->GetName() == "deviceType")
-		{
+        else if ([[child name] isEqualToString: @"deviceType"])
+        {
 			result.deviceType = parseInt(child, 0xFF);
 		}
-		else if (child->GetName() == "deviceTypeModifier")
+        else if ([[child name] isEqualToString: @"deviceTypeModifier"])
 		{
 			result.deviceTypeModifier = parseInt(child, 0xFF);
 		}
-		else if (child->GetName() == "sdSectorStart")
+        else if ([[child name] isEqualToString: @"sdSectorStart"])
 		{
 			result.sdSectorStart = parseInt(child, 0xFFFFFFFF);
 		}
-		else if (child->GetName() == "scsiSectors")
+        else if ([[child name] isEqualToString: @"scsiSectors"])
 		{
 			result.scsiSectors = parseInt(child, 0xFFFFFFFF);
 		}
-		else if (child->GetName() == "bytesPerSector")
+        else if ([[child name] isEqualToString: @"bytesPerSector"])
 		{
 			result.bytesPerSector = parseInt(child, 8192);
 		}
-		else if (child->GetName() == "sectorsPerTrack")
+        else if ([[child name] isEqualToString: @"sectorsPerTrack"])
 		{
 			result.sectorsPerTrack = parseInt(child, 255);
 		}
-		else if (child->GetName() == "headsPerCylinder")
+        else if ([[child name] isEqualToString: @"headsPerCylinder"])
 		{
 			result.headsPerCylinder = parseInt(child, 255);
 		}
-		else if (child->GetName() == "vendor")
+        else if ([[child name] isEqualToString: @"vendor"])
 		{
-			std::string s(child->GetNodeContent().mb_str());
+            std::string s((std::string([[child stringValue] cStringUsingEncoding:NSUTF8StringEncoding])));
 			s = s.substr(0, sizeof(result.vendor));
 			memset(result.vendor, ' ', sizeof(result.vendor));
 			memcpy(result.vendor, s.c_str(), s.size());
 		}
-		else if (child->GetName() == "prodId")
-		{
-			std::string s(child->GetNodeContent().mb_str());
+        else if ([[child name] isEqualToString: @"prodId"])
+        {
+            std::string s((std::string([[child stringValue] cStringUsingEncoding:NSUTF8StringEncoding])));
 			s = s.substr(0, sizeof(result.prodId));
 			memset(result.prodId, ' ', sizeof(result.prodId));
 			memcpy(result.prodId, s.c_str(), s.size());
 		}
-		else if (child->GetName() == "revision")
-		{
-			std::string s(child->GetNodeContent().mb_str());
+        else if ([[child name] isEqualToString: @"revision"])
+        {
+            std::string s((std::string([[child stringValue] cStringUsingEncoding:NSUTF8StringEncoding])));
 			s = s.substr(0, sizeof(result.revision));
 			memset(result.revision, ' ', sizeof(result.revision));
 			memcpy(result.revision, s.c_str(), s.size());
 		}
-		else if (child->GetName() == "serial")
-		{
-			std::string s(child->GetNodeContent().mb_str());
+        else if ([[child name] isEqualToString: @"serial"])
+        {
+            std::string s((std::string([[child stringValue] cStringUsingEncoding:NSUTF8StringEncoding])));
 			s = s.substr(0, sizeof(result.serial));
 			memset(result.serial, ' ', sizeof(result.serial));
 			memcpy(result.serial, s.c_str(), s.size());
 		}
 
-
-		child = child->GetNext();
+        child = [en nextObject];
+        #pragma GCC diagnostic pop
 	}
 	return result;
 }
 
 static S2S_BoardCfg
-parseBoardConfig(wxXmlNode* node)
+parseBoardConfig(NSXMLElement* node)
 {
 	S2S_BoardCfg result = ConfigUtil::DefaultBoardConfig();
 
-	wxXmlNode *child = node->GetChildren();
-	while (child)
+    NSArray *children = [node children];
+    NSEnumerator *en = [children objectEnumerator];
+    NSXMLNode *child = [en nextObject];
+    while (child)
 	{
-		if (child->GetName() == "selectionDelay")
+        if ([[child name] isEqualToString: @"selectionDelay"])
 		{
 			result.selectionDelay = parseInt(child, 255);
 		}
-		else if (child->GetName() == "startupDelay")
+        else if ([[child name] isEqualToString: @"startupDelay"])
 		{
 			result.startupDelay = parseInt(child, 255);
 		}
-		else if (child->GetName() == "unitAttention")
-		{
-			std::string s(child->GetNodeContent().mb_str());
+        else if ([[child name] isEqualToString: @"unitAttention"])
+        {
+            std::string s((std::string([[child stringValue] cStringUsingEncoding:NSUTF8StringEncoding])));
 			if (s == "true")
 			{
 				result.flags |= S2S_CFG_ENABLE_UNIT_ATTENTION;
@@ -567,9 +578,9 @@ parseBoardConfig(wxXmlNode* node)
 				result.flags = result.flags & ~S2S_CFG_ENABLE_UNIT_ATTENTION;
 			}
 		}
-		else if (child->GetName() == "parity")
+        else if ([[child name] isEqualToString: @"parity"])
 		{
-			std::string s(child->GetNodeContent().mb_str());
+            std::string s((std::string([[child stringValue] cStringUsingEncoding:NSUTF8StringEncoding])));
 			if (s == "true")
 			{
 				result.flags |= S2S_CFG_ENABLE_PARITY;
@@ -579,10 +590,10 @@ parseBoardConfig(wxXmlNode* node)
 				result.flags = result.flags & ~S2S_CFG_ENABLE_PARITY;
 			}
 		}
-		else if (child->GetName() == "enableScsi2")
-		{
-			std::string s(child->GetNodeContent().mb_str());
-			if (s == "true")
+        else if ([[child name] isEqualToString: @"enableScsi2"])
+        {
+            std::string s((std::string([[child stringValue] cStringUsingEncoding:NSUTF8StringEncoding])));
+            if (s == "true")
 			{
 				result.flags |= S2S_CFG_ENABLE_SCSI2;
 			}
@@ -591,9 +602,9 @@ parseBoardConfig(wxXmlNode* node)
 				result.flags = result.flags & ~S2S_CFG_ENABLE_SCSI2;
 			}
 		}
-		else if (child->GetName() == "enableTerminator")
-		{
-			std::string s(child->GetNodeContent().mb_str());
+        else if ([[child name] isEqualToString: @"enableTerminator"])
+        {
+            std::string s((std::string([[child stringValue] cStringUsingEncoding:NSUTF8StringEncoding])));
 			if (s == "true")
 			{
 				result.flags6 |= S2S_CFG_ENABLE_TERMINATOR;
@@ -603,9 +614,9 @@ parseBoardConfig(wxXmlNode* node)
 				result.flags6 = result.flags & ~S2S_CFG_ENABLE_TERMINATOR;
 			}
 		}
-		else if (child->GetName() == "selLatch")
-		{
-			std::string s(child->GetNodeContent().mb_str());
+        else if ([[child name] isEqualToString: @"selLatch"])
+        {
+            std::string s((std::string([[child stringValue] cStringUsingEncoding:NSUTF8StringEncoding])));
 			if (s == "true")
 			{
 				result.flags |= S2S_CFG_ENABLE_SEL_LATCH;
@@ -615,9 +626,9 @@ parseBoardConfig(wxXmlNode* node)
 				result.flags = result.flags & ~S2S_CFG_ENABLE_SEL_LATCH;
 			}
 		}
-		else if (child->GetName() == "mapLunsToIds")
+        else if ([[child name] isEqualToString: @"mapLunsToIds"])
 		{
-			std::string s(child->GetNodeContent().mb_str());
+            std::string s((std::string([[child stringValue] cStringUsingEncoding:NSUTF8StringEncoding])));
 			if (s == "true")
 			{
 				result.flags |= S2S_CFG_MAP_LUNS_TO_IDS;
@@ -627,11 +638,11 @@ parseBoardConfig(wxXmlNode* node)
 				result.flags = result.flags & ~S2S_CFG_MAP_LUNS_TO_IDS;
 			}
 		}
-		else if (child->GetName() == "scsiSpeed")
+        else if ([[child name] isEqualToString: @"scsiSpeed"])
 		{
 			result.scsiSpeed = parseInt(child, S2S_CFG_SPEED_SYNC_10);
 		}
-		child = child->GetNext();
+        child = [en nextObject];
 	}
 	return result;
 }
@@ -640,35 +651,40 @@ parseBoardConfig(wxXmlNode* node)
 std::pair<S2S_BoardCfg, std::vector<S2S_TargetCfg>>
 ConfigUtil::fromXML(const std::string& filename)
 {
-	wxXmlDocument doc;
-	if (!doc.Load(filename))
-	{
-		throw std::runtime_error("Could not load XML file");
-	}
+    NSData *data = [NSData dataWithContentsOfFile: [NSString stringWithUTF8String:filename.c_str()]];
+    NSXMLDocument *doc = [[NSXMLDocument alloc] initWithData: data
+                                                     options: NSXMLNodeOptionsNone
+                                                       error: NULL];
+    if (doc == nil)
+    {
+        throw std::runtime_error("Could not load XML file");
+    }
 
 	// start processing the XML file
-	if (doc.GetRoot()->GetName() != "SCSI2SD")
-	{
-		throw std::runtime_error("Invalid root node, expected <SCSI2SD>");
-	}
+    if ([[[doc rootElement] name] isEqualToString: @"SCSI2SD"] == NO)
+    {
+        throw std::runtime_error("Invalid root node, expected <SCSI2SD>");
+    }
 
 	S2S_BoardCfg boardConfig = DefaultBoardConfig();
 	int boardConfigFound = 0;
 
 	std::vector<S2S_TargetCfg> targets;
-	wxXmlNode *child = doc.GetRoot()->GetChildren();
-	while (child)
+    NSArray *children = [[doc rootElement] children]; // doc.GetRoot()->GetChildren();
+    NSEnumerator *en = [children objectEnumerator];
+    NSXMLElement *child = [en nextObject];
+    while (child)
 	{
-		if (child->GetName() == "SCSITarget")
+        if ([[child name] isEqualToString: @"SCSITarget"])
 		{
 			targets.push_back(parseTarget(child));
 		}
-		else if (child->GetName() == "S2S_BoardCfg")
+        else if ([[child name] isEqualToString: @"BoardConfig"])
 		{
 			boardConfig = parseBoardConfig(child);
 			boardConfigFound = 1;
 		}
-		child = child->GetNext();
+        child = [en nextObject];
 	}
 
 	if (!boardConfigFound && targets.size() > 0)

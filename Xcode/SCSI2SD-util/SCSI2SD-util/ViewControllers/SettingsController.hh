@@ -16,9 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface SettingsController : NSObject
 
 - (NSString *) toXml;
-- (void) setConfig: (BoardConfig)config;
+- (void) setConfig: (S2S_BoardCfg)config;
 - (void) setConfigData: (NSData *)data;
-- (BoardConfig) getConfig;
+- (S2S_BoardCfg) getConfig;
 
 @end
 

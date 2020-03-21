@@ -29,18 +29,12 @@
 
 - (NSString *) toXml
 {
-    BoardConfig config = [self getConfig];
+    S2S_BoardCfg config = [self getConfig];
     std::string s = SCSI2SD::ConfigUtil::toXML(config);
     NSString *string = [NSString stringWithCString:s.c_str() encoding:NSUTF8StringEncoding];
     return string;
 }
 
-/*
-- (void) fromXml: (NSXMLElement *)node
-{
-    NSLog(@"fromXml");
-}
-*/
 - (void) awakeFromNib
 {
     self.enableParity.toolTip = @"Enable to require valid SCSI parity bits when receiving data. Some hosts don't provide parity. SCSI2SD always outputs valid parity bits.";
@@ -57,18 +51,18 @@
     self.startupSelectionDelay.toolTip = @"Delay before responding to SCSI selection. SCSI1 hosts usually require 1ms delay, however some require no delay.";
 }
 
-- (void) setConfig: (BoardConfig)config
+- (void) setConfig: (S2S_BoardCfg)config
 {
     // NSLog(@"setConfig");
-    self.enableParity.state = (config.flags & CONFIG_ENABLE_PARITY) ? NSOnState : NSOffState;
-    self.enableUnitAttention.state = (config.flags & CONFIG_ENABLE_UNIT_ATTENTION) ? NSOnState : NSOffState;
-    self.enableSCSI2Mode.state = (config.flags & CONFIG_ENABLE_SCSI2) ? NSOnState : NSOffState;
+    self.enableParity.state = (config.flags & S2S_CFG_ENABLE_PARITY) ? NSOnState : NSOffState;
+    self.enableUnitAttention.state = (config.flags & S2S_CFG_ENABLE_UNIT_ATTENTION) ? NSOnState : NSOffState;
+    self.enableSCSI2Mode.state = (config.flags & S2S_CFG_ENABLE_SCSI2) ? NSOnState : NSOffState;
     self.enableSCSITerminator.state = (config.flags & S2S_CFG_ENABLE_TERMINATOR) ? NSOnState : NSOffState;
-    self.enableGlitch.state = (config.flags & CONFIG_DISABLE_GLITCH) ? NSOnState : NSOffState;
-    self.enableCache.state = (config.flags & CONFIG_ENABLE_CACHE) ? NSOnState : NSOffState;
-    self.enableDisconnect.state = (config.flags & CONFIG_ENABLE_DISCONNECT) ? NSOnState : NSOffState;
-    self.respondToShortSCSISelection.state = (config.flags & CONFIG_ENABLE_SEL_LATCH) ? NSOnState : NSOffState;
-    self.mapLUNStoSCSIIDs.state = (config.flags & CONFIG_MAP_LUNS_TO_IDS) ? NSOnState : NSOffState;
+    self.enableGlitch.state = (config.flags & S2S_CFG_DISABLE_GLITCH) ? NSOnState : NSOffState;
+    self.enableCache.state = (config.flags & S2S_CFG_ENABLE_CACHE) ? NSOnState : NSOffState;
+    self.enableDisconnect.state = (config.flags & S2S_CFG_ENABLE_DISCONNECT) ? NSOnState : NSOffState;
+    self.respondToShortSCSISelection.state = (config.flags & S2S_CFG_ENABLE_SEL_LATCH) ? NSOnState : NSOffState;
+    self.mapLUNStoSCSIIDs.state = (config.flags & S2S_CFG_MAP_LUNS_TO_IDS) ? NSOnState : NSOffState;
     self.startupDelay.intValue = config.startupDelay;
     self.startupSelectionDelay.intValue = config.selectionDelay;
     [self.speedLimit selectItemAtIndex: config.scsiSpeed];
@@ -76,28 +70,28 @@
 
 - (void) setConfigData:(NSData *)data
 {
-    BoardConfig config;
+    S2S_BoardCfg config;
     const void *bytes;
     bytes = [data bytes];
-    memcpy(&config, bytes, sizeof(BoardConfig));
+    memcpy(&config, bytes, sizeof(S2S_BoardCfg));
     [self setConfig: config];
 }
 
-- (BoardConfig) getConfig
+- (S2S_BoardCfg) getConfig
 {
-    BoardConfig config;
+    S2S_BoardCfg config;
     // NSLog(@"getConfig");
     config.flags |= self.enableSCSITerminator.intValue;
 
     config.flags =
-        (self.enableParity.state == NSOnState ? CONFIG_ENABLE_PARITY : 0) |
-        (self.enableUnitAttention.state == NSOnState ? CONFIG_ENABLE_UNIT_ATTENTION : 0) |
-        (self.enableSCSI2Mode.state == NSOnState ? CONFIG_ENABLE_SCSI2 : 0) |
-        (self.enableGlitch.state == NSOnState ? CONFIG_DISABLE_GLITCH : 0) |
-        (self.enableCache.state == NSOnState ? CONFIG_ENABLE_CACHE: 0) |
-        (self.enableDisconnect.state == NSOnState ? CONFIG_ENABLE_DISCONNECT: 0) |
-        (self.respondToShortSCSISelection.state == NSOnState ? CONFIG_ENABLE_SEL_LATCH : 0) |
-        (self.mapLUNStoSCSIIDs.state == NSOnState ? CONFIG_MAP_LUNS_TO_IDS : 0) |
+        (self.enableParity.state == NSOnState ? S2S_CFG_ENABLE_PARITY : 0) |
+        (self.enableUnitAttention.state == NSOnState ? S2S_CFG_ENABLE_UNIT_ATTENTION : 0) |
+        (self.enableSCSI2Mode.state == NSOnState ? S2S_CFG_ENABLE_SCSI2 : 0) |
+        (self.enableGlitch.state == NSOnState ? S2S_CFG_DISABLE_GLITCH : 0) |
+        (self.enableCache.state == NSOnState ? S2S_CFG_ENABLE_CACHE: 0) |
+        (self.enableDisconnect.state == NSOnState ? S2S_CFG_ENABLE_DISCONNECT: 0) |
+        (self.respondToShortSCSISelection.state == NSOnState ? S2S_CFG_ENABLE_SEL_LATCH : 0) |
+        (self.mapLUNStoSCSIIDs.state == NSOnState ? S2S_CFG_MAP_LUNS_TO_IDS : 0) |
         (self.enableSCSITerminator.state == NSOnState ? S2S_CFG_ENABLE_TERMINATOR : 0);
     config.startupDelay = self.startupDelay.intValue;
     config.selectionDelay = self.startupSelectionDelay.intValue;

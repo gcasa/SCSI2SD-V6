@@ -345,7 +345,8 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
                     //NSLog(@" %@, %s", self, sdinfo.str());
                     if(doScsiSelfTest)
                     {
-                        BOOL passed = myHID->scsiSelfTest();
+                        int errcode;
+                        BOOL passed = myHID->scsiSelfTest(errcode);
                         NSString *status = passed ? @"Passed" : @"FAIL";
                         [self logStringToPanel:[NSString stringWithFormat: @"\nSCSI Self Test: %@", status]];
                     }
@@ -418,7 +419,7 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
         
         NSString *path = [paths objectAtIndex: 0];
         char *sPath = (char *)[path cStringUsingEncoding:NSUTF8StringEncoding];
-        std::pair<BoardConfig, std::vector<TargetConfig>> configs(
+        std::pair<S2S_BoardCfg, std::vector<S2S_TargetCfg>> configs(
             SCSI2SD::ConfigUtil::fromXML(std::string(sPath)));
 
         // myBoardPanel->setConfig(configs.first);
@@ -495,90 +496,56 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
                             withObject: @"Saving configuration"
                          waitUntilDone:YES];
     int currentProgress = 0;
-    int totalProgress = (int)[deviceControllers count] * SCSI_CONFIG_ROWS + 1;
+    int totalProgress = (int)[deviceControllers count]; // * SCSI_CONFIG_ROWS + 1;
 
     // Write board config first.
-    int flashRow = SCSI_CONFIG_BOARD_ROW;
+    std::vector<uint8_t> cfgData (
+        SCSI2SD::ConfigUtil::boardConfigToBytes([self.settings getConfig]));
+    for (int i = 0; i < S2S_MAX_TARGETS; ++i)
+    {
+        std::vector<uint8_t> raw(
+            SCSI2SD::ConfigUtil::toBytes([[deviceControllers objectAtIndex:i] getTargetConfig])
+            );
+        cfgData.insert(cfgData.end(), raw.begin(), raw.end());
+    }
+    
+    uint32_t sector = myHID->getSDCapacity() - 2;
+    for (size_t i = 0; i < 2; ++i)
     {
         NSString *ss = [NSString stringWithFormat:
-                        @"Programming flash array %d row %d", SCSI_CONFIG_ARRAY, flashRow + 1];
+                        @"Writing SD Sector %zu",i];
         [self performSelectorOnMainThread: @selector(logStringToPanel:)
                                 withObject:ss
                              waitUntilDone:YES];
         currentProgress += 1;
-        [self performSelectorOnMainThread:@selector(updateProgress:)
-                               withObject:[NSNumber numberWithDouble: (double)totalProgress]
-                            waitUntilDone:NO];
 
-        std::vector<uint8_t> flashData =
-        SCSI2SD::ConfigUtil::boardConfigToBytes([self.settings getConfig]);
+        if (currentProgress == totalProgress)
+        {
+            NSString *ss = [NSString stringWithFormat:
+                            @"Save Complete"];
+            [self performSelectorOnMainThread: @selector(logStringToPanel:)
+                                    withObject:ss
+                                 waitUntilDone:YES];
+        }
+
         try
         {
-            myHID->writeFlashRow(
-                SCSI_CONFIG_ARRAY, flashRow, flashData);
+            std::vector<uint8_t> buf;
+            buf.insert(buf.end(), &cfgData[i * 512], &cfgData[(i+1) * 512]);
+            myHID->writeSector(sector++, buf);
         }
         catch (std::runtime_error& e)
         {
-             NSLog(@"%s",e.what());
+            NSString *ss = [NSString stringWithFormat:
+                            @"Exception %s",e.what()];
+            [self performSelectorOnMainThread: @selector(logStringToPanel:)
+                                    withObject:ss
+                                 waitUntilDone:YES];
             goto err;
         }
     }
 
-    flashRow = SCSI_CONFIG_0_ROW;
-    for (size_t i = 0;
-        i < [deviceControllers count];
-        ++i)
-    {
-        flashRow = (i <= 3)
-            ? SCSI_CONFIG_0_ROW + ((int)i*SCSI_CONFIG_ROWS)
-            : SCSI_CONFIG_4_ROW + ((int)(i-4)*SCSI_CONFIG_ROWS);
-
-        TargetConfig config([[deviceControllers objectAtIndex:i] getTargetConfig]);
-        std::vector<uint8_t> raw(SCSI2SD::ConfigUtil::toBytes(config));
-
-        for (size_t j = 0; j < SCSI_CONFIG_ROWS; ++j)
-        {
-            NSString *ss = [NSString stringWithFormat:
-                            @"Programming flash array %d row %d", SCSI_CONFIG_ARRAY, flashRow + 1];
-            [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                    withObject:ss
-                                 waitUntilDone:YES];
-
-            currentProgress += 1;
-            if (currentProgress == totalProgress)
-            {
-                [self performSelectorOnMainThread:@selector(logStringToPanel:)
-                                       withObject:@"Save complete"
-                                    waitUntilDone:YES];
-            }
-            [self performSelectorOnMainThread:@selector(updateProgress:)
-                                   withObject:[NSNumber numberWithDouble: (double)totalProgress]
-                                waitUntilDone:NO];
-
-            std::vector<uint8_t> flashData(SCSI_CONFIG_ROW_SIZE, 0);
-            std::copy(
-                &raw[j * SCSI_CONFIG_ROW_SIZE],
-                &raw[(1+j) * SCSI_CONFIG_ROW_SIZE],
-                flashData.begin());
-            try
-            {
-                myHID->writeFlashRow(
-                    SCSI_CONFIG_ARRAY, (int)flashRow + (int)j, flashData);
-            }
-            catch (std::runtime_error& e)
-            {
-                NSString *ss = [NSString stringWithFormat:
-                                @"Error: %s", e.what()];
-                [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                        withObject:ss
-                                     waitUntilDone:YES];
-                goto err;
-            }
-        }
-    }
-
     [self reset_hid];
-        //myHID = SCSI2SD::HID::Open();
     goto out;
 
 err:
@@ -644,99 +611,55 @@ out:
                         waitUntilDone:YES];
 
     int currentProgress = 0;
-    int totalProgress = (int)([deviceControllers count] * (NSUInteger)SCSI_CONFIG_ROWS + (NSUInteger)1);
+    int totalProgress = 2;
 
-    // Read board config first.
-    std::vector<uint8_t> boardCfgFlashData;
-    int flashRow = SCSI_CONFIG_BOARD_ROW;
+    std::vector<uint8_t> cfgData(S2S_CFG_SIZE);
+    uint32_t sector = myHID->getSDCapacity() - 2;
+    for (size_t i = 0; i < 2; ++i)
     {
         NSString *ss = [NSString stringWithFormat:
-                        @"\nReading flash array %d row %d", SCSI_CONFIG_ARRAY, flashRow + 1];
+                        @"\nReading sector %d", sector];
         [self performSelectorOnMainThread: @selector(logStringToPanel:)
                                 withObject:ss
                              waitUntilDone:YES];
+
         currentProgress += 1;
+        if (currentProgress == totalProgress)
+        {
+            NSString *ss = [NSString stringWithFormat:
+                            @"\nLoad complete"];
+            [self performSelectorOnMainThread: @selector(logStringToPanel:)
+                                    withObject:ss
+                                 waitUntilDone:YES];
+        }
+
+        std::vector<uint8_t> sdData;
         try
         {
-            myHID->readFlashRow(
-                SCSI_CONFIG_ARRAY, flashRow, boardCfgFlashData);
-            BoardConfig bConfig = SCSI2SD::ConfigUtil::boardConfigFromBytes(&boardCfgFlashData[0]);
-            NSData *configBytes = [[NSData alloc] initWithBytes: &bConfig length:sizeof(BoardConfig)];
-            [_settings performSelectorOnMainThread:@selector(setConfigData:)
-                                        withObject:configBytes
-                                     waitUntilDone:YES]; //  setConfig: ];
+            myHID->readSector(sector++, sdData);
         }
         catch (std::runtime_error& e)
         {
-            NSLog(@"%s",e.what());
             NSString *ss = [NSString stringWithFormat:
-                            @"\n\nException: %s\n\n",e.what()];
+                            @"\nException: %s", e.what()];
             [self performSelectorOnMainThread: @selector(logStringToPanel:)
                                     withObject:ss
                                  waitUntilDone:YES];
             goto err;
         }
+
+        std::copy(
+            sdData.begin(),
+            sdData.end(),
+            &cfgData[i * 512]);
     }
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-    for (size_t i = 0;
-        i < [deviceControllers count];
-        ++i)
+
+    [_settings setConfig: SCSI2SD::ConfigUtil::boardConfigFromBytes(&cfgData[0])];
+    for (int i = 0; i < S2S_MAX_TARGETS; ++i)
     {
-        flashRow = (i <= 3)
-            ? SCSI_CONFIG_0_ROW + (i*SCSI_CONFIG_ROWS)
-            : SCSI_CONFIG_4_ROW + ((i-4)*SCSI_CONFIG_ROWS);
-        std::vector<uint8_t> raw(sizeof(TargetConfig));
-
-        for (size_t j = 0; j < SCSI_CONFIG_ROWS; ++j)
-        {
-            NSString *ss = [NSString stringWithFormat:
-                            @"\nReading flash array %d row %d", SCSI_CONFIG_ARRAY, flashRow + 1];
-            [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                    withObject:ss
-                                 waitUntilDone:YES];
-            currentProgress += 1;
-            if (currentProgress == totalProgress)
-            {
-                [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                        withObject:@"\nRead Complete."
-                                     waitUntilDone:YES];
-            }
-            [self performSelectorOnMainThread:@selector(updateProgress:)
-                                   withObject:[NSNumber numberWithDouble:(double)currentProgress]
-                                waitUntilDone:NO];
-            
-            std::vector<uint8_t> flashData;
-            try
-            {
-                myHID->readFlashRow(
-                    SCSI_CONFIG_ARRAY, flashRow + j, flashData);
-
-            }
-            catch (std::runtime_error& e)
-            {
-                NSLog(@"%s",e.what());
-                goto err;
-            }
-
-            std::copy(
-                flashData.begin(),
-                flashData.end(),
-                &raw[j * SCSI_CONFIG_ROW_SIZE]);
-        }
-#pragma GCC diagnostic pop
-        TargetConfig tConfig = SCSI2SD::ConfigUtil::fromBytes(&raw[0]);
-        NSData *configBytes = [[NSData alloc] initWithBytes: &tConfig length:sizeof(TargetConfig)];
-        [[deviceControllers objectAtIndex: i] performSelectorOnMainThread:@selector(setTargetConfigData:)
-                                                               withObject:configBytes
-                                                            waitUntilDone:YES];
-    }
-
-    // Support old boards without board config set
-    if (memcmp(&boardCfgFlashData[0], "BCFG", 4)) {
-        BoardConfig defCfg = SCSI2SD::ConfigUtil::DefaultBoardConfig();
-        defCfg.flags = [[deviceControllers objectAtIndex:0] getTargetConfig].flagsDEPRECATED;
-        [_settings setConfig:defCfg];
+        DeviceController *dc = [deviceControllers objectAtIndex: i];
+        S2S_TargetCfg target = SCSI2SD::ConfigUtil::fromBytes(&cfgData[sizeof(S2S_BoardCfg) + i * sizeof(S2S_TargetCfg)]);
+        [dc setTargetConfig: target];
     }
 
     myInitialConfig = true;
@@ -1000,7 +923,7 @@ out:
         std::vector<uint8_t> flashData(rowData, rowData + 256);
         try
         {
-            self->myHID->writeFlashRow(0, (int)flashRow, flashData);
+            // self->myHID->writeFlashRow(0, (int)flashRow, flashData);
         }
         catch (std::runtime_error& e)
         {

@@ -16,8 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DeviceController : NSObject
 
 - (void) setTargetConfigData: (NSData *)data;
-- (void) setTargetConfig: (TargetConfig)config;
-- (TargetConfig) getTargetConfig;
+- (void) setTargetConfig: (S2S_TargetCfg)config;
+- (S2S_TargetCfg) getTargetConfig;
 - (NSString *) toXml;
 - (BOOL) evaluate;
 
