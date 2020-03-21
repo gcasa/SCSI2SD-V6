@@ -113,9 +113,46 @@
                 <outlet property="vendor" destination="MaA-yu-GBr" id="mRQ-gs-6FA"/>
             </connections>
         </customObject>
-        <customObject id="i9u-bG-GAU" customClass="DeviceController"/>
-        <customObject id="RDl-9l-zXo" customClass="DeviceController"/>
-        <customObject id="1nV-fo-Qea" customClass="DeviceController"/>
+        <customObject id="i9u-bG-GAU" customClass="DeviceController">
+            <connections>
+                <outlet property="SCSIID" destination="RXS-ce-ADl" id="UIW-cL-uhU"/>
+                <outlet property="autoErrorText" destination="eIk-k2-A88" id="iXx-xi-Xec"/>
+                <outlet property="autoStartSector" destination="5Ac-XG-hdq" id="2v7-iK-NIi"/>
+                <outlet property="deviceSize" destination="0I7-nT-pf8" id="fUs-xV-3tW"/>
+                <outlet property="deviceType" destination="6A2-9t-YJR" id="7ZB-Lm-Evh"/>
+                <outlet property="enableSCSITarget" destination="Ibk-0R-vRE" id="gSR-9G-ccv"/>
+                <outlet property="headsPerCylinder" destination="Fnq-W8-Zci" id="uTV-L1-naZ"/>
+                <outlet property="productId" destination="u2l-LN-EOK" id="wbc-NL-Ryj"/>
+                <outlet property="revsion" destination="7dQ-jt-lDE" id="Ifg-K4-XHr"/>
+                <outlet property="scsiIdErrorText" destination="ocG-zB-M6o" id="Dqh-AM-vJM"/>
+                <outlet property="sdCardStartSector" destination="LoX-DT-RiG" id="BiL-1F-rH6"/>
+                <outlet property="sectorCount" destination="yxr-2n-8QS" id="G8z-YL-lxr"/>
+                <outlet property="sectorSize" destination="VHK-yZ-RYo" id="qeK-1d-4Kp"/>
+                <outlet property="sectorsPerTrack" destination="3eV-VR-d2J" id="G2f-kE-NYb"/>
+                <outlet property="serialNumber" destination="cbW-YU-rIG" id="Pgw-CV-rZK"/>
+                <outlet property="vendor" destination="LYQ-0T-vq4" id="ZbH-LF-zrS"/>
+            </connections>
+        </customObject>
+        <customObject id="RDl-9l-zXo" customClass="DeviceController">
+            <connections>
+                <outlet property="SCSIID" destination="KkV-NY-4iZ" id="iPg-qD-eYD"/>
+                <outlet property="autoErrorText" destination="sqK-rR-Nbd" id="DoI-rv-wd7"/>
+                <outlet property="autoStartSector" destination="hNf-cg-lVc" id="J58-l9-buy"/>
+                <outlet property="deviceSize" destination="0yt-XE-qQq" id="ZV0-v3-Nf6"/>
+                <outlet property="deviceType" destination="77u-bG-vJh" id="2T9-TY-5Eu"/>
+                <outlet property="enableSCSITarget" destination="a4Q-GD-Yqw" id="zo8-eY-RvF"/>
+                <outlet property="headsPerCylinder" destination="Unr-a9-dPE" id="K5e-uc-P0h"/>
+                <outlet property="productId" destination="mP8-PK-zhX" id="kuH-K4-Tre"/>
+                <outlet property="revsion" destination="aeI-T7-vOg" id="epp-5u-D8B"/>
+                <outlet property="scsiIdErrorText" destination="sqK-rR-Nbd" id="Zsy-hx-J1F"/>
+                <outlet property="sdCardStartSector" destination="owC-32-iod" id="Hpz-xK-i5d"/>
+                <outlet property="sectorCount" destination="CAi-AD-m57" id="HJS-C1-EE3"/>
+                <outlet property="sectorSize" destination="0zl-hq-UTa" id="8og-2b-1dP"/>
+                <outlet property="sectorsPerTrack" destination="Tfy-Gg-eJR" id="T8W-Nc-OXn"/>
+                <outlet property="serialNumber" destination="XLj-GE-Yff" id="m4U-Yf-LRW"/>
+                <outlet property="vendor" destination="0sP-kq-YlB" id="EX6-NC-mg8"/>
+            </connections>
+        </customObject>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate">
             <connections>
                 <outlet property="device1" destination="Rxt-kb-gYI" id="9EF-FJ-ZfG"/>
@@ -124,7 +161,6 @@
                 <outlet property="device4" destination="eDc-Zj-phF" id="Pcs-0s-OkZ"/>
                 <outlet property="device5" destination="i9u-bG-GAU" id="Ilg-d9-ITQ"/>
                 <outlet property="device6" destination="RDl-9l-zXo" id="8Eb-3w-TBb"/>
-                <outlet property="device7" destination="1nV-fo-Qea" id="DWH-qP-IQw"/>
                 <outlet property="infoLabel" destination="ara-s3-3mi" id="zBW-ar-FhY"/>
                 <outlet property="logPanel" destination="H9u-55-H3N" id="0ax-Oo-P3x"/>
                 <outlet property="logTextView" destination="IUe-Fz-GvN" id="xlT-NK-QdU"/>
@@ -1837,7 +1873,7 @@
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Device 5" identifier="" id="DbQ-Mr-TUn">
-                                <view key="view" ambiguous="YES" id="JxH-aE-llL">
+                                <view key="view" id="JxH-aE-llL">
                                     <rect key="frame" x="10" y="33" width="677" height="368"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -2128,7 +2164,7 @@
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Device 6" identifier="" id="NJi-CL-wLP">
-                                <view key="view" id="sJ1-zK-gAP">
+                                <view key="view" ambiguous="YES" id="sJ1-zK-gAP">
                                     <rect key="frame" x="10" y="33" width="677" height="368"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
