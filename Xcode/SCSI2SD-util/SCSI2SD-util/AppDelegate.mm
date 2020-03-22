@@ -195,11 +195,9 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     [deviceControllers addObject: _device2];
     [deviceControllers addObject: _device3];
     [deviceControllers addObject: _device4];
-    /*
     [deviceControllers addObject: _device5];
     [deviceControllers addObject: _device6];
     [deviceControllers addObject: _device7];
-     */
     
     [self.tabView selectTabViewItemAtIndex:0];
     [self.progress setMinValue: 0.0];
@@ -496,7 +494,7 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
                             withObject: @"Saving configuration"
                          waitUntilDone:YES];
     int currentProgress = 0;
-    int totalProgress = (int)[deviceControllers count]; // * SCSI_CONFIG_ROWS + 1;
+    int totalProgress = 2; // (int)[deviceControllers count]; // * SCSI_CONFIG_ROWS + 1;
 
     // Write board config first.
     std::vector<uint8_t> cfgData (
