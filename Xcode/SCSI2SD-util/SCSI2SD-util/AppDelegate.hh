@@ -13,11 +13,13 @@
 #include "Firmware.hh"
 #include "scsi2sd.h"
 #include "Functions.hh"
+#include "Dfu.hh"
 
 @interface AppDelegate : NSObject <NSApplicationDelegate, NSComboBoxDataSource>
 {
     std::shared_ptr<SCSI2SD::HID> myHID;
     std::shared_ptr<SCSI2SD::Bootloader> myBootloader;
+    Dfu myDfu;
     
     bool myInitialConfig;
     //std::vector<TargetConfig *> myTargets;
