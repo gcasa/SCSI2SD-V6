@@ -68,6 +68,7 @@
 		1482B204239748DB001BA513 /* SettingsController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SettingsController.mm; sourceTree = "<group>"; };
 		14AF8335243A1B220046D0DF /* Dfu.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Dfu.hh; path = "../../../../src/scsi2sd-util6/Dfu.hh"; sourceTree = "<group>"; };
 		14AF8336243A1B220046D0DF /* Dfu.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Dfu.cc; path = "../../../../src/scsi2sd-util6/Dfu.cc"; sourceTree = "<group>"; };
+		14AF8339243A89B60046D0DF /* libusb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = libusb.h; path = "../../../../../src/scsi2sd-util6/libusb-1.0.23/libusb/libusb.h"; sourceTree = "<group>"; };
 		14C2719E24263416003AA991 /* SCSI2SD_HID.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SCSI2SD_HID.hh; path = "../../../../src/scsi2sd-util6/SCSI2SD_HID.hh"; sourceTree = "<group>"; };
 		14C2719F24263416003AA991 /* SCSI2SD_HID.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SCSI2SD_HID.mm; path = "../../../../src/scsi2sd-util6/SCSI2SD_HID.mm"; sourceTree = "<group>"; };
 		14C271A1242637B7003AA991 /* hidapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = hidapi.h; path = "../../../../src/scsi2sd-util6/hidapi/hidapi/hidapi.h"; sourceTree = "<group>"; };
@@ -177,6 +178,7 @@
 		1474C0FB23998F0D003C67D5 /* CPPModules */ = {
 			isa = PBXGroup;
 			children = (
+				14AF8338243A89840046D0DF /* libusb */,
 				14AF8336243A1B220046D0DF /* Dfu.cc */,
 				14AF8335243A1B220046D0DF /* Dfu.hh */,
 				14C271A52426551B003AA991 /* ConfigUtil.mm */,
@@ -241,6 +243,14 @@
 				1482B203239748DB001BA513 /* DeviceController.mm */,
 			);
 			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		14AF8338243A89840046D0DF /* libusb */ = {
+			isa = PBXGroup;
+			children = (
+				14AF8339243A89B60046D0DF /* libusb.h */,
+			);
+			path = libusb;
 			sourceTree = "<group>";
 		};
 		14D96BCD23C935330008E7B3 /* scsi2sd-util-cli */ = {

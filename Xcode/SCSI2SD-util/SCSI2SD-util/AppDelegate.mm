@@ -109,18 +109,39 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
 }
 
 // Output to the debug info panel...
-- (void) logStringToPanel: (NSString *)logString
+- (void) logStringToPanel: (NSString *)format, ...
 {
+    va_list args;
+    va_start(args, format);
     NSString *string = [self.logTextView string];
-    string = [string stringByAppendingString: logString];
-    [self.logTextView setString: string];
-    [self.logTextView scrollToEndOfDocument:self];
+    string = [string stringByAppendingFormat: format, args];
+    [self.logTextView performSelectorOnMainThread:@selector(setString:)
+                                       withObject:string
+                                    waitUntilDone:YES];
+    [self.logTextView performSelectorOnMainThread:@selector(scrollToEndOfDocument:)
+                                       withObject:self
+                                    waitUntilDone:YES];
+    va_end(args);
 }
 
 // Output to the label...
-- (void) logStringToLabel: (NSString *)logString
+- (void) logStringToLabel: (NSString *)format, ...
 {
-    [self.infoLabel setStringValue:logString];
+    va_list args;
+    va_start(args, format);
+    NSString *string = [self.logTextView string];
+    string = [string stringByAppendingFormat: format, args];
+    [self.infoLabel performSelectorOnMainThread:@selector(setStringValue:)
+                                     withObject:string
+                                  waitUntilDone:YES];
+    /*
+    [self.logTextView performSelectorOnMainThread:@selector(setString:)
+                                       withObject:string
+                                    waitUntilDone:YES];
+    [self.logTextView performSelectorOnMainThread:@selector(scrollToEndOfDocument:)
+                                       withObject:self
+                                    waitUntilDone:YES];*/
+    va_end(args);
 }
 
 // Start polling for the device...
@@ -229,146 +250,138 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     [self logStringToPanel: @"\n"];
 }
 
+- (void) logSCSI
+{
+    if ([[self scsiSelfTest] state] == NSControlStateValueOn ||
+        !myHID)
+    {
+        return;
+    }
+    try
+    {
+        std::vector<uint8_t> info;
+        if (myHID->readSCSIDebugInfo(info))
+        {
+            [self dumpScsiData: info];
+        }
+    }
+    catch (std::exception& e)
+    {
+        [self logStringToPanel: @"%s", e.what()];
+        myHID.reset();
+    }
+}
+
+- (void) redirectDfuOutput
+{
+    /*
+    if (myConsoleProcess)
+    {
+        std::stringstream ss;
+        while (myConsoleStderr && !myConsoleStderr->Eof() && myConsoleStderr->CanRead())
+        {
+            int c = myConsoleStderr->GetC();
+            if (c == '\n')
+            {
+                ss << "\r\n";
+            }
+            else if (c >= 0)
+            {
+                ss << (char) c;
+            }
+        }
+        while (myConsoleStdout && !myConsoleStdout->Eof() && myConsoleStdout->CanRead())
+        {
+            int c = myConsoleStdout->GetC();
+            if (c == '\n')
+            {
+                ss << "\r\n";
+            }
+            else if (c >= 0)
+            {
+                ss << (char) c;
+            }
+        }
+        myConsoleTerm->DisplayCharsUnsafe(ss.str());
+    }*/
+}
+
 // Periodically check to see if Device is present...
 - (void) doTimer
 {
-    if(shouldLogScsiData == YES)
-    {
-        [self logScsiData];
-    }
+    [self redirectDfuOutput];
+
+    [self logScsiData];
     time_t now = time(NULL);
     if (now == myLastPollTime) return;
     myLastPollTime = now;
 
     // Check if we are connected to the HID device.
-    // AND/or bootloader device.
     try
     {
-        if (myBootloader)
+        if (myHID && !myHID->ping())
         {
             // Verify the USB HID connection is valid
-            if (!myBootloader->ping())
-            {
-                [self reset_bootloader];
-            }
-        }
-
-        if (!myBootloader)
-        {
-            [self reset_bootloader];
-            if (myBootloader)
-            {
-                [self logStringToPanel:@"SCSI2SD Bootloader Ready"];
-                NSString *msg = [NSString stringWithFormat: @"SCSI2SD Ready, firmware version %s",myHID->getFirmwareVersionStr().c_str()];
-                [self logStringToLabel:msg];
-            }
-        }
-        else
-        {
-            [self logStringToPanel:@"SCSI2SD Bootloader Ready"];
-            NSString *msg = [NSString stringWithFormat: @"SCSI2SD Ready, firmware version %s",myHID->getFirmwareVersionStr().c_str()];
-            [self logStringToLabel:msg];
-        }
-
-        BOOL supressLog = NO;
-        if (myHID && myHID->getFirmwareVersion() < MIN_FIRMWARE_VERSION)
-        {
-            // No method to check connection is still valid.
-            [self reset_hid];
-            NSString *msg = [NSString stringWithFormat: @"SCSI2SD Ready, firmware version %s",myHID->getFirmwareVersionStr().c_str()];
-            [self logStringToLabel:msg];
-        }
-        else if (myHID && !myHID->ping())
-        {
-            // Verify the USB HID connection is valid
-            [self reset_hid];
-        }
-        else
-        {
-            if(myHID)
-            {
-                NSString *msg = [NSString stringWithFormat: @"SCSI2SD Ready, firmware version %s",myHID->getFirmwareVersionStr().c_str()];
-                [self logStringToLabel:msg];
-            }
+            myHID.reset();
         }
 
         if (!myHID)
         {
-            [self reset_hid];
+            myHID.reset(SCSI2SD::HID::Open());
             if (myHID)
             {
-                if (myHID->getFirmwareVersion() < MIN_FIRMWARE_VERSION)
+                [self logStringToLabel: @"SCSI2SD Ready, firmware version %s", myHID->getFirmwareVersionStr().c_str()];
+
+                std::vector<uint8_t> csd(myHID->getSD_CSD());
+                std::vector<uint8_t> cid(myHID->getSD_CID());
+                [self logStringToPanel: @"SD Capacity (512-byte sectors): %s\n", myHID->getSDCapacity()];
+
+                [self logStringToPanel: @"SD CSD Register: "];
+                for (size_t i = 0; i < csd.size(); ++i)
                 {
-                    if (!supressLog)
+                    [self logStringToPanel: @"%0x", static_cast<int>(csd[i])];
+                }
+                [self logStringToPanel: @"\nSD CID Register: "];
+                for (size_t i = 0; i < cid.size(); ++i)
+                {
+                    [self logStringToPanel: @"%0x", static_cast<int>(cid[i])];
+                }
+
+                if ([[self scsiSelfTest] state] == NSControlStateValueOn)
+                {
+                    int errcode;
+                    [self logStringToPanel: @"SCSI Self-Test: "];
+                    if (myHID->scsiSelfTest(errcode))
                     {
-                        // Oh dear, old firmware
-                        NSString *log = [NSString stringWithFormat: @"Firmware update required.  Version %s",myHID->getFirmwareVersionStr().c_str()];
-                        [self logStringToLabel: log];
+                        [self logStringToPanel: @"Passed"];
+                    }
+                    else
+                    {
+                        [self logStringToPanel: @"FAIL (%d)", errcode];
                     }
                 }
-                else
+
+                if (!myInitialConfig)
                 {
-                    NSString *msg = [NSString stringWithFormat: @"SCSI2SD Ready, firmware version %s",myHID->getFirmwareVersionStr().c_str()];
-                    [self logStringToLabel:msg];
-
-                    std::vector<uint8_t> csd(myHID->getSD_CSD());
-                    std::vector<uint8_t> cid(myHID->getSD_CID());
-                    msg = [NSString stringWithFormat: @"\nSD Capacity (512-byte sectors): %d",
-                        myHID->getSDCapacity()];
-                    [self logStringToPanel:msg];
-
-                    msg = [NSString stringWithFormat: @"\nSD CSD Register: "];
-                    [self logStringToPanel:msg];
-                    if (sdCrc7(&csd[0], 15, 0) != (csd[15] >> 1))
-                    {
-                        msg = [NSString stringWithFormat: @"\nBADCRC"];
-                        [self logStringToPanel:msg];
-                    }
-                    for (size_t i = 0; i < csd.size(); ++i)
-                    {
-                        [self logStringToPanel:[NSString stringWithFormat: @"%x", static_cast<int>(csd[i])]];
-                    }
-                    msg = [NSString stringWithFormat: @"\nSD CID Register: "];
-                    [self logStringToPanel:msg];
-                    if (sdCrc7(&cid[0], 15, 0) != (cid[15] >> 1))
-                    {
-                        msg = [NSString stringWithFormat: @"BADCRC"];
-                        [self logStringToPanel:msg];
-                    }
-                    for (size_t i = 0; i < cid.size(); ++i)
-                    {
-                        [self logStringToPanel:[NSString stringWithFormat: @"%x", static_cast<int>(cid[i])]];
-                    }
-
-                    //NSLog(@" %@, %s", self, sdinfo.str());
-                    if(doScsiSelfTest)
-                    {
-                        int errcode;
-                        BOOL passed = myHID->scsiSelfTest(errcode);
-                        NSString *status = passed ? @"Passed" : @"FAIL";
-                        [self logStringToPanel:[NSString stringWithFormat: @"\nSCSI Self Test: %@", status]];
-                    }
-                    
-                    if (!myInitialConfig)
-                    {
-                    }
-
+/* This doesn't work properly, and causes crashes.
+                    wxCommandEvent loadEvent(wxEVT_NULL, ID_BtnLoad);
+                    GetEventHandler()->AddPendingEvent(loadEvent);
+*/
                 }
+
             }
             else
             {
                 char ticks[] = {'/', '-', '\\', '|'};
                 myTickCounter++;
-                NSString *ss = [NSString stringWithFormat:@"Searching for SCSI2SD device %c", ticks[myTickCounter % sizeof(ticks)]];
-                [self logStringToLabel: ss];
+                [self logStringToLabel:@"Searching for SCSI2SD device %c", ticks[myTickCounter % sizeof(ticks)]];
             }
         }
     }
     catch (std::runtime_error& e)
     {
-        [self logStringToPanel:[NSString stringWithFormat:@"%s", e.what()]];
+        [self logStringToPanel:@"%s", e.what()];
     }
-
     [self evaluate];
 }
 
