@@ -15,7 +15,7 @@
 //	You should have received a copy of the GNU General Public License
 //	along with SCSI2SD.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <libusb.h>
+#include "libusb.h"
 
 #include <string>
 

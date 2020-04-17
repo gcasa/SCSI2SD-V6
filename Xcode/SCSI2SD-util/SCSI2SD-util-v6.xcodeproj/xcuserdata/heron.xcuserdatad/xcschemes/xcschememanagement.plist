@@ -4,10 +4,15 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>SCSI2SD-util.xcscheme_^#shared#^_</key>
+		<key>SCSI2SD-util-v6.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>2</integer>
+		</dict>
+		<key>SCSI2SD-util.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
 		</dict>
 		<key>scsi2sd-util-cli.xcscheme_^#shared#^_</key>
 		<dict>
