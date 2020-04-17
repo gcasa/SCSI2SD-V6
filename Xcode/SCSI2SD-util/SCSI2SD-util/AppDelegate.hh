@@ -19,7 +19,7 @@
 {
     std::shared_ptr<SCSI2SD::HID> myHID;
     std::shared_ptr<SCSI2SD::Bootloader> myBootloader;
-    Dfu myDfu;
+    SCSI2SD::Dfu myDfu;
     
     bool myInitialConfig;
     //std::vector<TargetConfig *> myTargets;

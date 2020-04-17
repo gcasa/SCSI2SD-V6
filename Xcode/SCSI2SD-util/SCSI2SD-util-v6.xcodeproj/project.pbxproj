@@ -19,6 +19,9 @@
 		14C271A024263416003AA991 /* SCSI2SD_HID.mm in Sources */ = {isa = PBXBuildFile; fileRef = 14C2719F24263416003AA991 /* SCSI2SD_HID.mm */; };
 		14C271A3242637F6003AA991 /* hid.c in Sources */ = {isa = PBXBuildFile; fileRef = 14C271A2242637F6003AA991 /* hid.c */; };
 		14C271A72426551B003AA991 /* ConfigUtil.mm in Sources */ = {isa = PBXBuildFile; fileRef = 14C271A52426551B003AA991 /* ConfigUtil.mm */; };
+		14C54CAB244A341B0086316F /* libusb-1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14B79B0D244A315E00C3FC92 /* libusb-1.0.a */; };
+		14C54CAC244A341B0086316F /* libusb-1.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 14C63FE7244A339500848412 /* libusb-1.0.0.dylib */; };
+		14C63FE9244A339500848412 /* libusb-1.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 14C63FE7244A339500848412 /* libusb-1.0.0.dylib */; };
 		14D96BCF23C935330008E7B3 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 14D96BCE23C935330008E7B3 /* main.mm */; };
 		14DEC5E8239F456800ECD04A /* Functions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 14DEC5E6239F456800ECD04A /* Functions.mm */; };
 		14DEC5EF23A4C76000ECD04A /* NSString+Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 14DEC5EE23A4C76000ECD04A /* NSString+Extensions.m */; };
@@ -68,6 +71,7 @@
 		1482B204239748DB001BA513 /* SettingsController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SettingsController.mm; sourceTree = "<group>"; };
 		14AF8335243A1B220046D0DF /* Dfu.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Dfu.hh; path = "../../../../src/scsi2sd-util6/Dfu.hh"; sourceTree = "<group>"; };
 		14AF8336243A1B220046D0DF /* Dfu.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Dfu.cc; path = "../../../../src/scsi2sd-util6/Dfu.cc"; sourceTree = "<group>"; };
+		14B79B0D244A315E00C3FC92 /* libusb-1.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libusb-1.0.a"; path = "../../src/scsi2sd-util6/libusb-1.0.23/libusb/libs/libusb-1.0.a"; sourceTree = "<group>"; };
 		14C2719E24263416003AA991 /* SCSI2SD_HID.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SCSI2SD_HID.hh; path = "../../../../src/scsi2sd-util6/SCSI2SD_HID.hh"; sourceTree = "<group>"; };
 		14C2719F24263416003AA991 /* SCSI2SD_HID.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SCSI2SD_HID.mm; path = "../../../../src/scsi2sd-util6/SCSI2SD_HID.mm"; sourceTree = "<group>"; };
 		14C271A1242637B7003AA991 /* hidapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = hidapi.h; path = "../../../../src/scsi2sd-util6/hidapi/hidapi/hidapi.h"; sourceTree = "<group>"; };
@@ -75,6 +79,7 @@
 		14C271A424265240003AA991 /* scsi2sd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = scsi2sd.h; path = ../../../../include/scsi2sd.h; sourceTree = "<group>"; };
 		14C271A52426551B003AA991 /* ConfigUtil.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ConfigUtil.mm; path = "../../../../src/scsi2sd-util6/ConfigUtil.mm"; sourceTree = "<group>"; };
 		14C271A62426551B003AA991 /* ConfigUtil.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ConfigUtil.hh; path = "../../../../src/scsi2sd-util6/ConfigUtil.hh"; sourceTree = "<group>"; };
+		14C63FE7244A339500848412 /* libusb-1.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libusb-1.0.0.dylib"; path = "../../../../src/scsi2sd-util6/libusb-1.0.23/libusb/libs/libusb-1.0.0.dylib"; sourceTree = "<group>"; };
 		14D96BCC23C935320008E7B3 /* scsi2sd-util-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "scsi2sd-util-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
 		14D96BCE23C935330008E7B3 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		14DEC5E6239F456800ECD04A /* Functions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Functions.mm; sourceTree = "<group>"; };
@@ -97,6 +102,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14C54CAB244A341B0086316F /* libusb-1.0.a in Frameworks */,
+				14C54CAC244A341B0086316F /* libusb-1.0.0.dylib in Frameworks */,
 				1474C0F42399677F003C67D5 /* libscsi2sd-util.a in Frameworks */,
 				DD7DCB0BEFAC1D7A075B511E /* libPods-SCSI2SD-util-v6.a in Frameworks */,
 			);
@@ -106,6 +113,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14C63FE9244A339500848412 /* libusb-1.0.0.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -171,6 +179,7 @@
 		1474C0952399677F003C67D5 /* lib */ = {
 			isa = PBXGroup;
 			children = (
+				14C63FE7244A339500848412 /* libusb-1.0.0.dylib */,
 				1474C0972399677F003C67D5 /* libscsi2sd-util.a */,
 			);
 			path = lib;
@@ -281,6 +290,7 @@
 		CA52CD68CFE882DFB0712F77 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				14B79B0D244A315E00C3FC92 /* libusb-1.0.a */,
 				26451B5FE5FE6B8B9C117D01 /* libPods-SCSI2SD-util-v6.a */,
 			);
 			name = Frameworks;
