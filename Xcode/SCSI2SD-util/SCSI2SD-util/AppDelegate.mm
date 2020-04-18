@@ -341,12 +341,12 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
                 [self logStringToPanel: @"SD CSD Register: "];
                 for (size_t i = 0; i < csd.size(); ++i)
                 {
-                    [self logStringToPanel: @"%0x", static_cast<int>(csd[i])];
+                    [self logStringToPanel: @"%0X", static_cast<int>(csd[i])];
                 }
                 [self logStringToPanel: @"\nSD CID Register: "];
                 for (size_t i = 0; i < cid.size(); ++i)
                 {
-                    [self logStringToPanel: @"%0x", static_cast<int>(cid[i])];
+                    [self logStringToPanel: @"%0X", static_cast<int>(cid[i])];
                 }
 
                 if ([[self scsiSelfTest] state] == NSControlStateValueOn)
@@ -630,20 +630,11 @@ out:
     uint32_t sector = myHID->getSDCapacity() - 2;
     for (size_t i = 0; i < 2; ++i)
     {
-        NSString *ss = [NSString stringWithFormat:
-                        @"\nReading sector %d", sector];
-        [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                withObject:ss
-                             waitUntilDone:YES];
-
+        [self logStringToPanel:  @"\nReading sector %d", sector];
         currentProgress += 1;
         if (currentProgress == totalProgress)
         {
-            NSString *ss = [NSString stringWithFormat:
-                            @"\nLoad complete"];
-            [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                    withObject:ss
-                                 waitUntilDone:YES];
+            [self logStringToPanel:  @"\nLoad Complete"];
         }
 
         std::vector<uint8_t> sdData;
@@ -653,11 +644,7 @@ out:
         }
         catch (std::runtime_error& e)
         {
-            NSString *ss = [NSString stringWithFormat:
-                            @"\nException: %s", e.what()];
-            [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                    withObject:ss
-                                 waitUntilDone:YES];
+            [self logStringToPanel:@"\nException: %s", e.what()];
             goto err;
         }
 
@@ -682,9 +669,7 @@ err:
     [self performSelectorOnMainThread:@selector(updateProgress:)
                            withObject:[NSNumber numberWithDouble:(double)100.0]
                         waitUntilDone:NO];
-    [self performSelectorOnMainThread:@selector(logStringToPanel:)
-                           withObject:@"Load failed"
-                        waitUntilDone:NO];
+    [self logStringToPanel: @"\nLoad Failed."];
     goto out;
 
 out:
@@ -698,7 +683,7 @@ out:
     [self performSelectorOnMainThread:@selector(startTimer)
                            withObject:NULL
                         waitUntilDone:NO];
-
+    
     return;
 }
 
