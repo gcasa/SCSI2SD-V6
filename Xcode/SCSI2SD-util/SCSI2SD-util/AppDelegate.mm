@@ -505,9 +505,7 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
                         waitUntilDone:NO];
     if (!myHID) return;
 
-    [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                            withObject: @"Saving configuration"
-                         waitUntilDone:YES];
+    [self logStringToPanel:@"Saving configuration"];
     int currentProgress = 0;
     int totalProgress = 2; // (int)[deviceControllers count]; // * SCSI_CONFIG_ROWS + 1;
 
@@ -525,20 +523,12 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     uint32_t sector = myHID->getSDCapacity() - 2;
     for (size_t i = 0; i < 2; ++i)
     {
-        NSString *ss = [NSString stringWithFormat:
-                        @"Writing SD Sector %zu",i];
-        [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                withObject:ss
-                             waitUntilDone:YES];
+        [self logStringToPanel: @"\nWriting SD Sector %zu",i];
         currentProgress += 1;
 
         if (currentProgress == totalProgress)
         {
-            NSString *ss = [NSString stringWithFormat:
-                            @"Save Complete"];
-            [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                    withObject:ss
-                                 waitUntilDone:YES];
+            [self logStringToPanel: @"\nSave Complete"];
         }
 
         try
@@ -549,11 +539,7 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
         }
         catch (std::runtime_error& e)
         {
-            NSString *ss = [NSString stringWithFormat:
-                            @"Exception %s",e.what()];
-            [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                    withObject:ss
-                                 waitUntilDone:YES];
+            [self logStringToPanel:  @"\nException %s",e.what()];
             goto err;
         }
     }
@@ -565,9 +551,7 @@ err:
     [self performSelectorOnMainThread:@selector(updateProgress:)
                            withObject:[NSNumber numberWithDouble: (double)100.0]
                         waitUntilDone:NO];
-    [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                            withObject:@"Save Failed"
-                         waitUntilDone:YES];
+    [self logStringToPanel: @"\nSave Failed"];
     goto out;
 
 out:
