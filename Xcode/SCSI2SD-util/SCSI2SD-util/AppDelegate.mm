@@ -28,6 +28,7 @@ void clean_exit_on_sig(int sig_num)
 #define MIN_FIRMWARE_VERSION 0x0400
 #define MIN_FIRMWARE_VERSION 0x0400
 
+/*
 static uint8_t sdCrc7(uint8_t* chr, uint8_t cnt, uint8_t crc)
 {
     uint8_t a;
@@ -46,7 +47,7 @@ static uint8_t sdCrc7(uint8_t* chr, uint8_t cnt, uint8_t crc)
         }
     }
     return crc & 0x7F;
-}
+}*/
 
 
 BOOL RangesIntersect(NSRange range1, NSRange range2) {
@@ -490,6 +491,94 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     }
 }
 
+// Load from device...
+- (void) loadFromDeviceThread: (id)obj
+{
+    [self performSelectorOnMainThread:@selector(stopTimer)
+                           withObject:NULL
+                        waitUntilDone:NO];
+    [self performSelectorOnMainThread:@selector(updateProgress:)
+                           withObject:[NSNumber numberWithDouble:0.0]
+                        waitUntilDone:NO];
+    [self performSelectorOnMainThread:@selector(showProgress:)
+                           withObject:nil
+                        waitUntilDone:NO];
+    if (!myHID) // goto out;
+    {
+        return;
+    }
+    
+    [self logStringToPanel: @"\nLoad config settings"];
+
+    int currentProgress = 0;
+    int totalProgress = 2;
+
+    std::vector<uint8_t> cfgData(S2S_CFG_SIZE);
+    uint32_t sector = myHID->getSDCapacity() - 2;
+    for (size_t i = 0; i < 2; ++i)
+    {
+        [self logStringToPanel:  @"\nReading sector %d", sector];
+        currentProgress += 1;
+        if (currentProgress == totalProgress)
+        {
+            [self logStringToPanel:  @"\nLoad Complete"];
+        }
+
+        std::vector<uint8_t> sdData;
+        try
+        {
+            myHID->readSector(sector++, sdData);
+        }
+        catch (std::runtime_error& e)
+        {
+            [self logStringToPanel:@"\nException: %s", e.what()];
+            goto err;
+        }
+
+        std::copy(
+            sdData.begin(),
+            sdData.end(),
+            &cfgData[i * 512]);
+    }
+
+    [_settings setConfig: SCSI2SD::ConfigUtil::boardConfigFromBytes(&cfgData[0])];
+    for (int i = 0; i < S2S_MAX_TARGETS; ++i)
+    {
+        DeviceController *dc = [deviceControllers objectAtIndex: i];
+        S2S_TargetCfg target = SCSI2SD::ConfigUtil::fromBytes(&cfgData[sizeof(S2S_BoardCfg) + i * sizeof(S2S_TargetCfg)]);
+        [dc setTargetConfig: target];
+    }
+
+    myInitialConfig = true;
+    goto out;
+
+err:
+    [self performSelectorOnMainThread:@selector(updateProgress:)
+                           withObject:[NSNumber numberWithDouble:(double)100.0]
+                        waitUntilDone:NO];
+    [self logStringToPanel: @"\nLoad Failed."];
+    goto out;
+
+out:
+    [self performSelectorOnMainThread:@selector(updateProgress:)
+                           withObject:[NSNumber numberWithDouble:(double)100.0]
+                        waitUntilDone:NO];
+    [NSThread sleepForTimeInterval:1.0];
+    [self performSelectorOnMainThread:@selector(hideProgress:)
+                           withObject:nil
+                        waitUntilDone:NO];
+    [self performSelectorOnMainThread:@selector(startTimer)
+                           withObject:NULL
+                        waitUntilDone:NO];
+    
+    return;
+}
+
+- (IBAction)loadFromDevice:(id)sender
+{
+    [NSThread detachNewThreadSelector:@selector(loadFromDeviceThread:) toTarget:self withObject:self];
+}
+
 // Save information to device on background thread....
 - (void) saveToDeviceThread: (id)obj
 {
@@ -574,108 +663,7 @@ out:
     [NSThread detachNewThreadSelector:@selector(saveToDeviceThread:) toTarget:self withObject:self];
 }
 
-- (void) loadFromDeviceThread: (id)obj
-{
-    [self performSelectorOnMainThread:@selector(stopTimer)
-                           withObject:NULL
-                        waitUntilDone:NO];
-    [self performSelectorOnMainThread:@selector(updateProgress:)
-                           withObject:[NSNumber numberWithDouble:0.0]
-                        waitUntilDone:NO];
-    [self performSelectorOnMainThread:@selector(showProgress:)
-                           withObject:nil
-                        waitUntilDone:NO];
-    if (!myHID) // goto out;
-    {
-        [self reset_hid];
-    }
-    
-    if(!myHID)
-    {
-        [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                               withObject:@"Couldn't initialize HID configuration"
-                            waitUntilDone:YES];
-        [self startTimer];
-        return;
-    }
-
-    [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                           withObject:@"Loading configuration"
-                        waitUntilDone:YES];
-    
-    [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                           withObject:@"Load config settings"
-                        waitUntilDone:YES];
-
-    int currentProgress = 0;
-    int totalProgress = 2;
-
-    std::vector<uint8_t> cfgData(S2S_CFG_SIZE);
-    uint32_t sector = myHID->getSDCapacity() - 2;
-    for (size_t i = 0; i < 2; ++i)
-    {
-        [self logStringToPanel:  @"\nReading sector %d", sector];
-        currentProgress += 1;
-        if (currentProgress == totalProgress)
-        {
-            [self logStringToPanel:  @"\nLoad Complete"];
-        }
-
-        std::vector<uint8_t> sdData;
-        try
-        {
-            myHID->readSector(sector++, sdData);
-        }
-        catch (std::runtime_error& e)
-        {
-            [self logStringToPanel:@"\nException: %s", e.what()];
-            goto err;
-        }
-
-        std::copy(
-            sdData.begin(),
-            sdData.end(),
-            &cfgData[i * 512]);
-    }
-
-    [_settings setConfig: SCSI2SD::ConfigUtil::boardConfigFromBytes(&cfgData[0])];
-    for (int i = 0; i < S2S_MAX_TARGETS; ++i)
-    {
-        DeviceController *dc = [deviceControllers objectAtIndex: i];
-        S2S_TargetCfg target = SCSI2SD::ConfigUtil::fromBytes(&cfgData[sizeof(S2S_BoardCfg) + i * sizeof(S2S_TargetCfg)]);
-        [dc setTargetConfig: target];
-    }
-
-    myInitialConfig = true;
-    goto out;
-
-err:
-    [self performSelectorOnMainThread:@selector(updateProgress:)
-                           withObject:[NSNumber numberWithDouble:(double)100.0]
-                        waitUntilDone:NO];
-    [self logStringToPanel: @"\nLoad Failed."];
-    goto out;
-
-out:
-    [self performSelectorOnMainThread:@selector(updateProgress:)
-                           withObject:[NSNumber numberWithDouble:(double)100.0]
-                        waitUntilDone:NO];
-    [NSThread sleepForTimeInterval:1.0];
-    [self performSelectorOnMainThread:@selector(hideProgress:)
-                           withObject:nil
-                        waitUntilDone:NO];
-    [self performSelectorOnMainThread:@selector(startTimer)
-                           withObject:NULL
-                        waitUntilDone:NO];
-    
-    return;
-}
-
-- (IBAction)loadFromDevice:(id)sender
-{
-    [NSThread detachNewThreadSelector:@selector(loadFromDeviceThread:) toTarget:self withObject:self];
-}
-
+// Upgrade firmware...
 - (void) upgradeFirmwareThread: (NSString *)filename
 {
     [self performSelectorOnMainThread:@selector(stopTimer)
