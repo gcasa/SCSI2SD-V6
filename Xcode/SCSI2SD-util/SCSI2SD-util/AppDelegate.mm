@@ -185,7 +185,7 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
 {
     try
     {
-        myBootloader.reset(SCSI2SD::Bootloader::Open());
+        // myBootloader.reset(SCSI2SD::Bootloader::Open());
     }
     catch (std::exception& e)
     {
@@ -207,7 +207,7 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     try
     {
         myHID.reset(SCSI2SD::HID::Open());
-        myBootloader.reset(SCSI2SD::Bootloader::Open());
+        //myBootloader.reset(SCSI2SD::Bootloader::Open());
     }
     catch (std::exception& e)
     {
@@ -313,7 +313,6 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
 - (void) doTimer
 {
     [self redirectDfuOutput];
-
     [self logScsiData];
     time_t now = time(NULL);
     if (now == myLastPollTime) return;
@@ -410,7 +409,6 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
      [outputString writeToFile:filename atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 }
 
-// Save XML file....
 - (IBAction)saveFile:(id)sender
 {
     NSSavePanel *panel = [NSSavePanel savePanel];
@@ -463,7 +461,6 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     }
 }
 
-// Open file panel
 - (IBAction)openFile:(id)sender
 {
     NSOpenPanel *panel = [NSOpenPanel openPanel];
@@ -503,6 +500,8 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     [self performSelectorOnMainThread:@selector(showProgress:)
                            withObject:nil
                         waitUntilDone:NO];
+
+    // myHID.reset(SCSI2SD::HID::Open()); // reopen hid
     if (!myHID) // goto out;
     {
         return;
@@ -666,6 +665,7 @@ out:
 // Upgrade firmware...
 - (void) upgradeFirmwareThread: (NSString *)filename
 {
+    /*
     [self performSelectorOnMainThread:@selector(stopTimer)
                            withObject:NULL
                         waitUntilDone:NO];
@@ -818,6 +818,7 @@ out:
     [self performSelectorOnMainThread:@selector(startTimer)
                            withObject:NULL
                         waitUntilDone:NO];
+     */
 }
 
 - (void) upgradeFirmwareEnd: (NSOpenPanel *)panel
@@ -844,6 +845,7 @@ out:
 
 - (void)bootloaderUpdateThread: (NSString *)filename
 {
+    /*
     NSData *fileData = [NSData dataWithContentsOfFile:filename];
     NSUInteger len = [fileData length];
     if (len != 0x2400)
@@ -917,7 +919,7 @@ err:
     
 out:
     return;
-
+*/
 }
 
 - (void) bootLoaderUpdateEnd: (NSOpenPanel *)panel

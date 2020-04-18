@@ -684,13 +684,28 @@
                                         <popUpButton toolTip="Limit SCSI interface speed" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YQw-dR-rmW">
                                             <rect key="frame" x="265" y="278" width="159" height="25"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <popUpButtonCell key="cell" type="push" title="Normal" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="LeL-rm-YSp" id="QTo-ub-H5S">
+                                            <popUpButtonCell key="cell" type="push" title="No Limit (safe)" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="LeL-rm-YSp" id="QTo-ub-H5S">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                                 <menu key="menu" id="lg0-gW-kcG">
                                                     <items>
-                                                        <menuItem title="Normal" state="on" id="LeL-rm-YSp"/>
-                                                        <menuItem title="Slow" id="DcK-rs-tNI"/>
+                                                        <menuItem title="No Limit (safe)" state="on" id="LeL-rm-YSp"/>
+                                                        <menuItem title="Async, 1.5MB/s" tag="1" id="Kdi-fh-9zI">
+                                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                                        </menuItem>
+                                                        <menuItem title="Async, 3.3MB/s" tag="2" id="mvI-CD-ycw">
+                                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                                        </menuItem>
+                                                        <menuItem title="Async, 5 MB/s" tag="3" id="Ej9-1N-hIJ">
+                                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                                        </menuItem>
+                                                        <menuItem title="Sync, 5 MB/s" tag="4" id="F8r-6y-h9T">
+                                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                                        </menuItem>
+                                                        <menuItem title="Sync, 10 MB/s" tag="5" id="bdB-Ss-cxT">
+                                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                                        </menuItem>
+                                                        <menuItem title="Turbo (less reliable)" tag="6" id="DcK-rs-tNI"/>
                                                     </items>
                                                 </menu>
                                             </popUpButtonCell>
