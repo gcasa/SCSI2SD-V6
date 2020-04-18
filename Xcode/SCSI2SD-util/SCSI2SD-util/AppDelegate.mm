@@ -114,7 +114,8 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     va_list args;
     va_start(args, format);
     NSString *string = [self.logTextView string];
-    string = [string stringByAppendingFormat: format, args];
+    NSString *formatString = [[NSString alloc] initWithFormat:format arguments:args];
+    string = [string stringByAppendingString: formatString];
     [self.logTextView performSelectorOnMainThread:@selector(setString:)
                                        withObject:string
                                     waitUntilDone:YES];
@@ -130,7 +131,8 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     va_list args;
     va_start(args, format);
     NSString *string = [self.logTextView string];
-    string = [string stringByAppendingFormat: format, args];
+    NSString *formatString = [[NSString alloc] initWithFormat:format arguments:args];
+    string = [string stringByAppendingString: formatString];
     [self.infoLabel performSelectorOnMainThread:@selector(setStringValue:)
                                      withObject:string
                                   waitUntilDone:YES];
@@ -334,7 +336,7 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
 
                 std::vector<uint8_t> csd(myHID->getSD_CSD());
                 std::vector<uint8_t> cid(myHID->getSD_CID());
-                [self logStringToPanel: @"SD Capacity (512-byte sectors): %s\n", myHID->getSDCapacity()];
+                [self logStringToPanel: @"SD Capacity (512-byte sectors): %d\n", myHID->getSDCapacity()];
 
                 [self logStringToPanel: @"SD CSD Register: "];
                 for (size_t i = 0; i < csd.size(); ++i)
