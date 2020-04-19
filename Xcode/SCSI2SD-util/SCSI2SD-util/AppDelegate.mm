@@ -631,7 +631,7 @@ out:
         }
     }
 
-    [self reset_hid];
+    // [self reset_hid];
     goto out;
 
 err:
