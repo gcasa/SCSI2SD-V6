@@ -226,6 +226,7 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     shouldLogScsiData = NO;
     
     [self startTimer];
+    aLock = [[NSLock alloc] init];
     [self loadDefaults: nil];
 }
 
@@ -486,6 +487,7 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
 // Load from device...
 - (void) loadFromDeviceThread: (id)obj
 {
+    [aLock lock];
     [self performSelectorOnMainThread:@selector(stopTimer)
                            withObject:NULL
                         waitUntilDone:NO];
@@ -565,6 +567,7 @@ out:
                            withObject:NULL
                         waitUntilDone:NO];
     
+    [aLock unlock];
     return;
 }
 
@@ -576,6 +579,7 @@ out:
 // Save information to device on background thread....
 - (void) saveToDeviceThread: (id)obj
 {
+    [aLock lock];
     [self performSelectorOnMainThread:@selector(stopTimer)
                            withObject:NULL
                         waitUntilDone:NO];
@@ -649,6 +653,7 @@ out:
                            withObject:NULL
                         waitUntilDone:NO];
 
+    [aLock unlock];
     return;
 }
 
