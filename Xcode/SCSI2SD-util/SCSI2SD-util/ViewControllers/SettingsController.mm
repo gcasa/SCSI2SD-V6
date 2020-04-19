@@ -51,9 +51,16 @@
     self.startupSelectionDelay.toolTip = @"Delay before responding to SCSI selection. SCSI1 hosts usually require 1ms delay, however some require no delay.";
 }
 
-- (NSData *)structToData: (S2S_BoardCfg)config
+
+- (NSData *) structToData: (S2S_BoardCfg)config withMutableData: (NSMutableData *)d
 {
-    return [NSData dataWithBytes: &config length: sizeof(S2S_BoardCfg)];
+    [d appendBytes:&config length:sizeof(S2S_BoardCfg)];
+    return [d copy];
+}
+
+- (NSData *) structToData: (S2S_BoardCfg)config
+{
+    return [self structToData:config withMutableData:[NSMutableData data]];
 }
 
 - (S2S_BoardCfg) dataToStruct: (NSData *)d
@@ -88,12 +95,10 @@
     [self.speedLimit selectItemAtIndex: config.scsiSpeed];
 }
 
-- (S2S_BoardCfg) getConfig
+- (void) getConfigData: (NSMutableData *)d
 {
     S2S_BoardCfg config;
-    // NSLog(@"getConfig");
     config.flags |= self.enableSCSITerminator.intValue;
-
     config.flags =
         (self.enableParity.state == NSOnState ? S2S_CFG_ENABLE_PARITY : 0) |
         (self.enableUnitAttention.state == NSOnState ? S2S_CFG_ENABLE_UNIT_ATTENTION : 0) |
@@ -107,8 +112,15 @@
     config.startupDelay = self.startupDelay.intValue;
     config.selectionDelay = self.startupSelectionDelay.intValue;
     config.scsiSpeed = self.speedLimit.indexOfSelectedItem;
-    
-    return config;
+    [self structToData: config withMutableData: d];
 }
 
+- (S2S_BoardCfg) getConfig
+{
+    NSMutableData *d = [NSMutableData data];
+    [self performSelectorOnMainThread:@selector(getConfigData:)
+                           withObject:d
+                        waitUntilDone:YES];
+    return  [self dataToStruct: d];
+}
 @end

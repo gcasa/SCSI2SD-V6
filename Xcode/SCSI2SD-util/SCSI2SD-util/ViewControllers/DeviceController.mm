@@ -61,9 +61,15 @@
     self.scsiIdErrorText.stringValue = @"";
 }
 
+- (NSData *) structToData: (S2S_TargetCfg)config withMutableData: (NSMutableData *)d
+{
+    [d appendBytes:&config length:sizeof(S2S_TargetCfg)];
+    return [d copy];
+}
+
 - (NSData *) structToData: (S2S_TargetCfg)config
 {
-    return [NSData dataWithBytes: &config length: sizeof(S2S_TargetCfg)];
+    return [self structToData:config withMutableData:[NSMutableData data]];
 }
 
 - (S2S_TargetCfg) dataToStruct: (NSData *)d
@@ -105,11 +111,9 @@
     // [self.autoStartSector setState:]
 }
 
-- (S2S_TargetCfg) getTargetConfig
+- (void) getTargetConfigData: (NSMutableData *)d
 {
     S2S_TargetCfg targetConfig;
-    
-    NSLog(@"getTargetConfig");
     targetConfig.scsiId = self.SCSIID.intValue + self.enableSCSITarget.state == NSOnState ? 0x80 : 0x0;
     targetConfig.deviceType = self.deviceType.indexOfSelectedItem;
     targetConfig.sdSectorStart = self.sdCardStartSector.intValue;
@@ -119,8 +123,16 @@
     strncpy(targetConfig.prodId, [self.productId.stringValue cStringUsingEncoding:NSUTF8StringEncoding], 16);
     strncpy(targetConfig.revision, [self.revsion.stringValue cStringUsingEncoding:NSUTF8StringEncoding], 4);
     strncpy(targetConfig.serial, [self.serialNumber.stringValue cStringUsingEncoding:NSUTF8StringEncoding], 16);
+    [self structToData: targetConfig withMutableData: d];
+}
 
-    return targetConfig;
+- (S2S_TargetCfg) getTargetConfig
+{
+    NSMutableData *d = [NSMutableData data];
+    [self performSelectorOnMainThread:@selector(getTargetConfigData:)
+                           withObject:d
+                        waitUntilDone:YES];
+    return  [self dataToStruct: d];
 }
 
 - (NSString *) toXml
