@@ -109,20 +109,23 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     [self.progress setHidden:YES];
 }
 
+- (void) outputToPanel: (NSString* )formatString
+{
+    NSString *string = [self.logTextView string];
+    string = [string stringByAppendingString: formatString];
+    [self.logTextView setString: string];
+    [self.logTextView scrollToEndOfDocument:self];
+}
+
 // Output to the debug info panel...
 - (void) logStringToPanel: (NSString *)format, ...
 {
     va_list args;
     va_start(args, format);
-    NSString *string = [self.logTextView string];
     NSString *formatString = [[NSString alloc] initWithFormat:format arguments:args];
-    string = [string stringByAppendingString: formatString];
-    [self.logTextView performSelectorOnMainThread:@selector(setString:)
-                                       withObject:string
-                                    waitUntilDone:YES];
-    [self.logTextView performSelectorOnMainThread:@selector(scrollToEndOfDocument:)
-                                       withObject:self
-                                    waitUntilDone:YES];
+    [self performSelectorOnMainThread:@selector(outputToPanel:)
+                           withObject:formatString
+                        waitUntilDone:YES];
     va_end(args);
 }
 
@@ -131,19 +134,10 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
 {
     va_list args;
     va_start(args, format);
-    NSString *string = [self.logTextView string];
     NSString *formatString = [[NSString alloc] initWithFormat:format arguments:args];
-    string = [string stringByAppendingString: formatString];
     [self.infoLabel performSelectorOnMainThread:@selector(setStringValue:)
-                                     withObject:string
+                                     withObject:formatString
                                   waitUntilDone:YES];
-    /*
-    [self.logTextView performSelectorOnMainThread:@selector(setString:)
-                                       withObject:string
-                                    waitUntilDone:YES];
-    [self.logTextView performSelectorOnMainThread:@selector(scrollToEndOfDocument:)
-                                       withObject:self
-                                    waitUntilDone:YES];*/
     va_end(args);
 }
 
@@ -206,8 +200,9 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     
     try
     {
-        myHID.reset(SCSI2SD::HID::Open());
+        //myHID.reset(SCSI2SD::HID::Open());
         //myBootloader.reset(SCSI2SD::Bootloader::Open());
+        [self reset_hid];
     }
     catch (std::exception& e)
     {

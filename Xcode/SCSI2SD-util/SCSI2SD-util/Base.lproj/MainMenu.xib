@@ -144,7 +144,7 @@
                 <outlet property="headsPerCylinder" destination="Unr-a9-dPE" id="K5e-uc-P0h"/>
                 <outlet property="productId" destination="mP8-PK-zhX" id="kuH-K4-Tre"/>
                 <outlet property="revsion" destination="aeI-T7-vOg" id="epp-5u-D8B"/>
-                <outlet property="scsiIdErrorText" destination="sqK-rR-Nbd" id="Zsy-hx-J1F"/>
+                <outlet property="scsiIdErrorText" destination="jGQ-xe-ZNj" id="tE4-rY-xEx"/>
                 <outlet property="sdCardStartSector" destination="owC-32-iod" id="Hpz-xK-i5d"/>
                 <outlet property="sectorCount" destination="CAi-AD-m57" id="HJS-C1-EE3"/>
                 <outlet property="sectorSize" destination="0zl-hq-UTa" id="8og-2b-1dP"/>
