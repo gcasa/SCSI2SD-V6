@@ -61,9 +61,30 @@
     self.scsiIdErrorText.stringValue = @"";
 }
 
+- (NSData *) structToData: (S2S_TargetCfg)config
+{
+    return [NSData dataWithBytes: &config length: sizeof(S2S_TargetCfg)];
+}
+
+- (S2S_TargetCfg) dataToStruct: (NSData *)d
+{
+    S2S_TargetCfg config;
+    memcpy(&config, [d bytes], sizeof(S2S_TargetCfg));
+    return config;
+}
+
 - (void) setTargetConfig: (S2S_TargetCfg)config
 {
-    // NSLog(@"setTargetConfig");
+    NSData *d = [self structToData:config];
+    [self performSelectorOnMainThread:@selector(setTargetConfigData:)
+                           withObject:d
+                        waitUntilDone:YES];
+}
+
+- (void) setTargetConfigData: (NSData *)data
+{
+    S2S_TargetCfg config = [self dataToStruct: data];
+    
     self.enableSCSITarget.state = (config.scsiId & 0x80) ? NSOnState : NSOffState;
     [self.SCSIID setStringValue:
      [NSString stringWithFormat: @"%d", (config.scsiId & 0x80) ?
@@ -82,15 +103,6 @@
     [self.sectorsPerTrack setStringValue: [NSString stringWithFormat: @"%d", config.sectorsPerTrack]];
     [self.headsPerCylinder setStringValue: [NSString stringWithFormat: @"%d", config.headsPerCylinder]];
     // [self.autoStartSector setState:]
-}
-
-- (void) setTargetConfigData: (NSData *)data
-{
-    S2S_TargetCfg config;
-    const void *bytes;
-    bytes = [data bytes];
-    memcpy(&config, bytes, sizeof(S2S_TargetCfg));
-    [self setTargetConfig: config];
 }
 
 - (S2S_TargetCfg) getTargetConfig
