@@ -2492,7 +2492,7 @@
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Device 7" identifier="" id="pKn-LE-PyJ">
-                                <view key="view" ambiguous="YES" id="2MF-cF-lCM">
+                                <view key="view" id="2MF-cF-lCM">
                                     <rect key="frame" x="10" y="33" width="677" height="368"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>

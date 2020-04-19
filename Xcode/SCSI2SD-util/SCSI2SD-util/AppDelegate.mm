@@ -665,160 +665,30 @@ out:
 // Upgrade firmware...
 - (void) upgradeFirmwareThread: (NSString *)filename
 {
-    /*
-    [self performSelectorOnMainThread:@selector(stopTimer)
-                           withObject:NULL
-                        waitUntilDone:NO];
-
-    if(filename != nil)
+    if ([[filename pathExtension] isEqualToString: @"dfu"] == NO)
     {
-        int prog = 0;
-        while (true)
-        {
-            try
-            {
-                if (!myHID)
-                {
-                    [self reset_hid];
-                }
-                if (myHID)
-                {
-                    [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                            withObject: @"Resetting SCSI2SD Into Bootloader"
-                                         waitUntilDone:YES];
-                    myHID->enterBootloader();
-                    [self reset_hid];
-                }
-
-
-                if (!myBootloader)
-                {
-//                    myBootloader = SCSI2SD::Bootloader::Open();
-                    [self reset_bootloader];
-                    if (myBootloader)
-                    {
-                        [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                                withObject: @"Bootloader found"
-                                             waitUntilDone:YES];
-                        break;
-                    }
-                }
-                else if (myBootloader)
-                {
-                    // Verify the USB HID connection is valid
-                    if (!myBootloader->ping())
-                    {
-                        [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                                withObject: @"Bootloader ping failed"
-                                             waitUntilDone:YES];
-                        [self reset_bootloader];
-                    }
-                    else
-                    {
-                        [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                                withObject: @"Bootloader found"
-                                             waitUntilDone:YES];
-                        break;
-                    }
-                }
-            }
-            catch (std::exception& e)
-            {
-                NSLog(@"%s",e.what());
-                [self reset_hid];
-                [self reset_bootloader];
-            }
-            [NSThread sleepForTimeInterval:0.1];
-        }
-
-        int totalFlashRows = 0;
-        NSString *tmpFile = nil;
-        try
-        {
-            zipper::ReaderPtr reader(new zipper::FileReader([filename cStringUsingEncoding:NSUTF8StringEncoding]));
-            zipper::Decompressor decomp(reader);
-            std::vector<zipper::CompressedFilePtr> files(decomp.getEntries());
-            for (auto it(files.begin()); it != files.end(); it++)
-            {
-                if (myBootloader && myBootloader->isCorrectFirmware((*it)->getPath()))
-                {
-                    NSString *ss = [NSString stringWithFormat:
-                                    @"\nFound firmware entry %s within archive %@\n",
-                                    (*it)->getPath().c_str(), filename];
-                    [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                            withObject: ss
-                                         waitUntilDone:YES];
-                    tmpFile = [NSTemporaryDirectory()
-                               stringByAppendingPathComponent:
-                               [NSString stringWithFormat:
-                                @"\nSCSI2SD_Firmware-%f.scsi2sd\n",
-                                [[NSDate date] timeIntervalSince1970]]];
-                    zipper::FileWriter out([tmpFile cStringUsingEncoding:NSUTF8StringEncoding]);
-                    (*it)->decompress(out);
-                    NSString *msg = [NSString stringWithFormat:
-                                     @"\nFirmware extracted to %@\n",tmpFile];
-                    [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                            withObject: msg
-                                         waitUntilDone:YES];
-                    break;
-                }
-            }
-
-            if ([tmpFile isEqualToString:@""])
-            {
-                // TODO allow "force" option
-                [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                        withObject: @"\nWrong filename\n"
-                                     waitUntilDone:YES];
-                return;
-            }
-
-            SCSI2SD::Firmware firmware([tmpFile cStringUsingEncoding:NSUTF8StringEncoding]);
-            totalFlashRows = firmware.totalFlashRows();
-        }
-        catch (std::exception& e)
-        {
-            NSString *msg = [NSString stringWithFormat:@"Could not open firmware file: %s",e.what()];
-            [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                    withObject:msg
-                                 waitUntilDone:YES];
-            return;
-        }
-
-        [self performSelectorOnMainThread:@selector(updateProgress:)
-                               withObject:[NSNumber numberWithDouble:(double)((double)prog / (double)totalFlashRows)]
-                            waitUntilDone:NO];
-
-        NSString *msg2 = [NSString stringWithFormat:@"Upgrading firmware from file: %@", tmpFile];
-        [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                withObject:msg2
-                             waitUntilDone:YES];
-        try
-        {
-            myBootloader->load([tmpFile cStringUsingEncoding:NSUTF8StringEncoding], NULL);
-            [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                    withObject: @"Firmware update successful"
-                                 waitUntilDone:YES];
-            [self reset_hid];
-            [self reset_hid];
-            [self reset_bootloader];
-        }
-        catch (std::exception& e)
-        {
-            [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                   withObject: [NSString stringWithFormat:@"%s",e.what()]
-                                waitUntilDone: YES];
-            [self reset_hid];
-            [self reset_bootloader];
-            [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                   withObject: @"Firmware update failed!"
-                                waitUntilDone: YES];
-        }
+        [self logStringToPanel: @"SCSI2SD-V6 requires .dfu extension"];
     }
-    [self performSelectorOnMainThread:@selector(startTimer)
-                           withObject:NULL
-                        waitUntilDone:NO];
-     */
+
+    NSString *dfuPath = [[NSBundle mainBundle] pathForResource:@"dfu-util" ofType:@""];
+    NSString *commandString = [NSString stringWithFormat:@"%@ --download \"%@\" -alt 0 --reset", dfuPath, filename];
+    [self logStringToPanel: @"Running: %s", commandString];
+    NSPipe *pipe = [NSPipe pipe];
+    NSTask *task = [[NSTask alloc] init];
+    NSFileHandle *file = [pipe fileHandleForReading];
+    
+    task.launchPath = dfuPath;
+    task.arguments  = [NSArray arrayWithObjects: [NSString stringWithFormat: @"--download \"%@\"",filename],
+                        @"-alt 0",
+                        @"--reset",
+                       nil];
+    task.standardOutput = pipe;
+
+    [task launch];
+    NSData *d = [file readDataToEndOfFile];
+    [file closeFile];
+    NSString *output = [[NSString alloc] initWithData:d encoding:NSUTF8StringEncoding];
+    [self logStringToPanel: output];
 }
 
 - (void) upgradeFirmwareEnd: (NSOpenPanel *)panel
@@ -836,7 +706,7 @@ out:
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     [panel beginSheetForDirectory:NULL
                              file:NULL
-                            types:[NSArray arrayWithObject:@"scsi2sd"]
+                            types:[NSArray arrayWithObject:@"dfu"]
                    modalForWindow:[self mainWindow]
                     modalDelegate:self
                    didEndSelector: @selector(upgradeFirmwareEnd:)
