@@ -666,24 +666,35 @@ out:
     }
 
     NSString *dfuPath = [[NSBundle mainBundle] pathForResource:@"dfu-util" ofType:@""];
-    NSString *commandString = [NSString stringWithFormat:@"%@ --download \"%@\" -alt 0 --reset", dfuPath, filename];
-    [self logStringToPanel: @"Running: %s", commandString];
+    NSString *commandString = [NSString stringWithFormat:@"%@ -D %@ -a 0 -R", [dfuPath lastPathComponent], filename];
+    [self logStringToPanel: @"Running: %@", commandString];
     NSPipe *pipe = [NSPipe pipe];
     NSTask *task = [[NSTask alloc] init];
     NSFileHandle *file = [pipe fileHandleForReading];
+    NSPipe *errPipe = [NSPipe pipe];
+    NSFileHandle *err = [errPipe fileHandleForReading];
     
     task.launchPath = dfuPath;
-    task.arguments  = [NSArray arrayWithObjects: [NSString stringWithFormat: @"--download \"%@\"",filename],
-                        @"-alt 0",
-                        @"--reset",
+    task.arguments  = [NSArray arrayWithObjects: [NSString stringWithFormat: @"-D %@",filename],
+                        @"-a 0",
+                        @"-R",
                        nil];
     task.standardOutput = pipe;
-
+    task.standardError = errPipe;
+    
     [task launch];
     NSData *d = [file readDataToEndOfFile];
     [file closeFile];
+    NSData *e = [err readDataToEndOfFile];
+    [err closeFile];
+    
     NSString *output = [[NSString alloc] initWithData:d encoding:NSUTF8StringEncoding];
+    NSString *error = [[NSString alloc] initWithData:e encoding:NSUTF8StringEncoding];
+
+    [self logStringToPanel: @"\n"];
     [self logStringToPanel: output];
+    [self logStringToPanel: @"\n"];
+    [self logStringToPanel: error];
 }
 
 - (void) upgradeFirmwareEnd: (NSOpenPanel *)panel
