@@ -227,6 +227,7 @@
 		1482B1E623973F3E001BA513 /* SCSI2SD-util */ = {
 			isa = PBXGroup;
 			children = (
+				14C54CB3244FC17F0086316F /* libdfu */,
 				14C54CB0244BBC250086316F /* Precompiled */,
 				146A538F23BBEB5B0000A06B /* Classes */,
 				14DEC5EC23A4C67A00ECD04A /* Categories */,
@@ -260,6 +261,13 @@
 				14C54CB1244BBC590086316F /* dfu-util */,
 			);
 			path = Precompiled;
+			sourceTree = "<group>";
+		};
+		14C54CB3244FC17F0086316F /* libdfu */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = libdfu;
 			sourceTree = "<group>";
 		};
 		14D96BCD23C935330008E7B3 /* scsi2sd-util-cli */ = {
