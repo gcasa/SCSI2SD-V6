@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		144F109F245DC47C00655924 /* libdfu-util.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 144F109E245DC47B00655924 /* libdfu-util.a */; };
 		146A539223BBEB800000A06B /* ConfigObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 146A539123BBEB800000A06B /* ConfigObject.mm */; };
 		1482B1E923973F3E001BA513 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1482B1E823973F3E001BA513 /* AppDelegate.mm */; };
 		1482B1EB23973F42001BA513 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1482B1EA23973F42001BA513 /* Assets.xcassets */; };
@@ -47,6 +48,7 @@
 /* Begin PBXFileReference section */
 		03245E2E41A614094EACB579 /* Pods-SCSI2SD-util.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SCSI2SD-util.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SCSI2SD-util/Pods-SCSI2SD-util.debug.xcconfig"; sourceTree = "<group>"; };
 		14418B4623AAC77000C8EB09 /* hidpacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = hidpacket.h; path = ../../../../include/hidpacket.h; sourceTree = "<group>"; };
+		144F109E245DC47B00655924 /* libdfu-util.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libdfu-util.a"; path = "../../../../src/scsi2sd-util6/dfu-util/libdfu-util.a"; sourceTree = "<group>"; };
 		146A539023BBEB800000A06B /* ConfigObject.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ConfigObject.hh; sourceTree = "<group>"; };
 		146A539123BBEB800000A06B /* ConfigObject.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ConfigObject.mm; sourceTree = "<group>"; };
 		1474BFEB2399677E003C67D5 /* cybtldr_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cybtldr_api.h; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				144F109F245DC47C00655924 /* libdfu-util.a in Frameworks */,
 				14C54CAB244A341B0086316F /* libusb-1.0.a in Frameworks */,
 				DD7DCB0BEFAC1D7A075B511E /* libPods-SCSI2SD-util-v6.a in Frameworks */,
 			);
@@ -178,6 +181,7 @@
 		1474C0952399677F003C67D5 /* lib */ = {
 			isa = PBXGroup;
 			children = (
+				144F109E245DC47B00655924 /* libdfu-util.a */,
 				14C63FE7244A339500848412 /* libusb-1.0.0.dylib */,
 			);
 			path = lib;

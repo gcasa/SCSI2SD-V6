@@ -19,10 +19,37 @@
 // #include "ConfigUtil.hh"
 #define TIMER_INTERVAL 0.1
 
+extern "C" {
+    int dfu_util(int argc, char **argv); // our one and only interface with the dfu library...
+}
+
 void clean_exit_on_sig(int sig_num)
 {
     NSLog(@"Signal %d received\n",sig_num);
     exit( 0 ); // exit cleanly...
+}
+
+char** convertNSArrayToCArray(NSArray *array)
+{
+    char **carray = NULL;
+    int c = (int)[array count];
+    
+    carray = (char **)calloc(c, sizeof(char*));
+    for (int i = 0; i < [array count]; i++)
+    {
+        NSString *s = [array objectAtIndex: i];
+        char *cs = (char *)[s cStringUsingEncoding:NSUTF8StringEncoding];
+        carray[i] = cs;
+    }
+    
+    return carray;
+}
+
+char** convertNSArrayToCArrayForMain(NSArray *array)
+{
+    NSMutableArray *narray = [NSMutableArray arrayWithObject: @"dummy"]; // add dummy for executable name
+    [narray arrayByAddingObjectsFromArray: array];
+    return convertNSArrayToCArray([narray copy]);
 }
 
 #define MIN_FIRMWARE_VERSION 0x0400
@@ -168,6 +195,20 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
             NSString *msg = [NSString stringWithFormat: @"SCSI2SD Ready, firmware version %s",myHID->getFirmwareVersionStr().c_str()];
             [self logStringToLabel:msg];
         }
+        
+        // myDfu = new SCSI2SD::Dfu;
+    }
+    catch (std::exception& e)
+    {
+        NSLog(@"Exception caught : %s\n", e.what());
+    }
+}
+
+- (void) close_hid
+{
+    try
+    {
+        myHID.reset();
     }
     catch (std::exception& e)
     {
@@ -670,36 +711,40 @@ out:
         [self logStringToPanel: @"SCSI2SD-V6 requires .dfu extension"];
     }
 
-    NSString *dfuPath = [[NSBundle mainBundle] pathForResource:@"dfu-util" ofType:@""];
-    NSString *commandString = [NSString stringWithFormat:@"%@ -D %@ -a 0 -R", [dfuPath lastPathComponent], filename];
-    [self logStringToPanel: @"Running: %@", commandString];
-    NSPipe *pipe = [NSPipe pipe];
-    NSTask *task = [[NSTask alloc] init];
-    NSFileHandle *file = [pipe fileHandleForReading];
-    NSPipe *errPipe = [NSPipe pipe];
-    NSFileHandle *err = [errPipe fileHandleForReading];
+    [self stopTimer];
     
-    task.launchPath = dfuPath;
-    task.arguments  = [NSArray arrayWithObjects: [NSString stringWithFormat: @"-D %@",filename],
-                        @"-a 0",
-                        @"-R",
-                       nil];
-    task.standardOutput = pipe;
-    task.standardError = errPipe;
-    
-    [task launch];
-    NSData *d = [file readDataToEndOfFile];
-    [file closeFile];
-    NSData *e = [err readDataToEndOfFile];
-    [err closeFile];
-    
-    NSString *output = [[NSString alloc] initWithData:d encoding:NSUTF8StringEncoding];
-    NSString *error = [[NSString alloc] initWithData:e encoding:NSUTF8StringEncoding];
+    while (true)
+    {
+        try
+        {
+            if (!myHID) myHID.reset(SCSI2SD::HID::Open());
+            if (myHID)
+            {
+                [self logStringToPanel: @"Resetting SCSI2SD into bootloader"];
+                myHID->enterBootloader();
+                myHID.reset();
+            }
 
-    [self logStringToPanel: @"\n"];
-    [self logStringToPanel: output];
-    [self logStringToPanel: @"\n"];
-    [self logStringToPanel: error];
+            if (myDfu.hasDevice())
+            {
+                [self logStringToPanel: @"\n\nSTM DFU Bootloader found\n"];
+                NSString *dfuPath = [[NSBundle mainBundle] pathForResource:@"dfu-util" ofType:@""];
+                NSString *commandString = [NSString stringWithFormat:@"%@ -D %@ -a 0 -R", [dfuPath lastPathComponent], filename];
+                NSArray *commandArray = [commandString componentsSeparatedByString: @" "];
+                char **array = convertNSArrayToCArray(commandArray);
+                int count = (int)[commandArray count];
+                dfu_util(count, array);
+                break;
+            }
+        }
+        catch (std::exception& e)
+        {
+             [self logStringToPanel: @"%s",e.what()];
+            myHID.reset();
+        }
+    }
+    
+    [self startTimer];
 }
 
 - (void) upgradeFirmwareEnd: (NSOpenPanel *)panel
