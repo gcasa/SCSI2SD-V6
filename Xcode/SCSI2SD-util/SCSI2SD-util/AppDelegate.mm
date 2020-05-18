@@ -734,12 +734,15 @@ out:
                 char **array = convertNSArrayToCArray(commandArray);
                 int count = (int)[commandArray count];
                 dfu_util(count, array);
+                [self performSelectorOnMainThread:@selector(reset_hid)
+                                       withObject:nil
+                                    waitUntilDone:YES];
                 break;
             }
         }
         catch (std::exception& e)
         {
-             [self logStringToPanel: @"%s",e.what()];
+            [self logStringToPanel: @"%s",e.what()];
             myHID.reset();
         }
     }
