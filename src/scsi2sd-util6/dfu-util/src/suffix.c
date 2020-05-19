@@ -40,7 +40,7 @@ int verbose;
 
 static void help(void)
 {
-	fprintf(stderr, "Usage: dfu-suffix [options] ...\n"
+	fdfu_printf(stderr, "Usage: dfu-suffix [options] ...\n"
 		"  -h --help\t\t\tPrint this help message\n"
 		"  -V --version\t\t\tPrint the version number\n"
 		"  -c --check <file>\t\tCheck DFU suffix of <file>\n"
@@ -56,8 +56,8 @@ static void help(void)
 
 static void print_version(void)
 {
-	printf("dfu-suffix (%s) %s\n\n", PACKAGE, PACKAGE_VERSION);
-	printf("Copyright 2011-2012 Stefan Schmidt, 2013-2014 Tormod Volden\n"
+	dfu_printf("dfu-suffix (%s) %s\n\n", PACKAGE, PACKAGE_VERSION);
+	dfu_printf("Copyright 2011-2012 Stefan Schmidt, 2013-2014 Tormod Volden\n"
 	       "This program is Free Software and has ABSOLUTELY NO WARRANTY\n"
 	       "Please report bugs to %s\n\n", PACKAGE_BUGREPORT);
 
@@ -135,12 +135,12 @@ int main(int argc, char **argv)
 	}
 
 	if (!file.name) {
-		fprintf(stderr, "You need to specify a filename\n");
+		fdfu_printf(stderr, "You need to specify a filename\n");
 		help();
 	}
 
 	if (spec != 0x0100 && spec != 0x011a) {
-		fprintf(stderr, "Only DFU specification 0x0100 and 0x011a supported\n");
+		fdfu_printf(stderr, "Only DFU specification 0x0100 and 0x011a supported\n");
 		help();
 	}
 
@@ -153,7 +153,7 @@ int main(int argc, char **argv)
 		file.bcdDFU = spec;
 		/* always write suffix, rewrite prefix if there was one */
 		dfu_store_file(&file, 1, file.size.prefix != 0);
-		printf("Suffix successfully added to file\n");
+		dfu_printf("Suffix successfully added to file\n");
 		break;
 
 	case MODE_CHECK:
@@ -165,7 +165,7 @@ int main(int argc, char **argv)
 		dfu_load_file(&file, NEEDS_SUFFIX, MAYBE_PREFIX);
 		dfu_store_file(&file, 0, file.size.prefix != 0);
 		if (file.size.suffix) /* had a suffix */
-			printf("Suffix successfully removed from file\n");
+			dfu_printf("Suffix successfully removed from file\n");
 		break;
 
 	default:

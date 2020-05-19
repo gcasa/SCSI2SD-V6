@@ -38,13 +38,13 @@
 # include <errno.h>
 # include <string.h>
 # define warnx(...) do {\
-    fprintf(stderr, __VA_ARGS__);\
-    fprintf(stderr, "\n"); } while (0)
+    fdfu_printf(stderr, __VA_ARGS__);\
+    fdfu_printf(stderr, "\n"); } while (0)
 # define errx(eval, ...) do {\
     warnx(__VA_ARGS__);\
     exit(eval); } while (0)
 # define warn(...) do {\
-    fprintf(stderr, "%s: ", strerror(errno));\
+    fdfu_printf(stderr, "%s: ", strerror(errno));\
     warnx(__VA_ARGS__); } while (0)
 # define err(eval, ...) do {\
     warn(__VA_ARGS__);\

@@ -162,12 +162,12 @@ static int parse_number(char *str, char *nmb)
 
 static void help(void)
 {
-	fprintf(stderr, "Usage: dfu-util [options] ...\n"
+	fdfu_printf(stderr, "Usage: dfu-util [options] ...\n"
 		"  -h --help\t\t\tPrint this help message\n"
 		"  -V --version\t\t\tPrint the version number\n"
 		"  -v --verbose\t\t\tPrint verbose debug statements\n"
 		"  -l --list\t\t\tList currently attached DFU capable devices\n");
-	fprintf(stderr, "  -e --detach\t\t\tDetach currently attached DFU capable devices\n"
+	fdfu_printf(stderr, "  -e --detach\t\t\tDetach currently attached DFU capable devices\n"
 		"  -E --detach-delay seconds\tTime to wait before reopening a device after detach\n"
 		"  -d --device <vendor>:<product>[,<vendor_dfu>:<product_dfu>]\n"
 		"\t\t\t\tSpecify Vendor/Product ID(s) of DFU device\n"
@@ -178,7 +178,7 @@ static void help(void)
 		"\t\t\t\tSpecify Serial String of DFU device\n"
 		"  -a --alt <alt>\t\tSpecify the Altsetting of the DFU Interface\n"
 		"\t\t\t\tby name or by number\n");
-	fprintf(stderr, "  -t --transfer-size <size>\tSpecify the number of bytes per USB Transfer\n"
+	fdfu_printf(stderr, "  -t --transfer-size <size>\tSpecify the number of bytes per USB Transfer\n"
 		"  -U --upload <file>\t\tRead firmware from device into <file>\n"
 		"  -Z --upload-size <bytes>\tSpecify the expected upload size in bytes\n"
 		"  -D --download <file>\t\tWrite firmware from <file> into device\n"
@@ -192,8 +192,8 @@ static void help(void)
 
 static void print_version(void)
 {
-	printf(PACKAGE_STRING "\n\n");
-	printf("Copyright 2005-2009 Weston Schmidt, Harald Welte and OpenMoko Inc.\n"
+	dfu_printf(PACKAGE_STRING "\n\n");
+	dfu_printf("Copyright 2005-2009 Weston Schmidt, Harald Welte and OpenMoko Inc.\n"
 	       "Copyright 2010-2016 Tormod Volden and Stefan Schmidt\n"
            "Copyright 2020 Michael McMaster <michael@codesrc.com>\n"
 	       "This program is Free Software and has ABSOLUTELY NO WARRANTY\n"
@@ -335,7 +335,7 @@ int dfu_util(int argc, char **argv)
 	}
 
 	if (mode == MODE_NONE) {
-		fprintf(stderr, "You need to specify one of -D or -U\n");
+		fdfu_printf(stderr, "You need to specify one of -D or -U\n");
 		help();
 	}
 
@@ -350,11 +350,11 @@ int dfu_util(int argc, char **argv)
 		 * use any IDs from the file suffix for device matching */
 		if (match_vendor < 0 && file.idVendor != 0xffff) {
 			match_vendor = file.idVendor;
-			printf("Match vendor ID from file: %04x\n", match_vendor);
+			dfu_printf("Match vendor ID from file: %04x\n", match_vendor);
 		}
 		if (match_product < 0 && file.idProduct != 0xffff) {
 			match_product = file.idProduct;
-			printf("Match product ID from file: %04x\n", match_product);
+			dfu_printf("Match product ID from file: %04x\n", match_product);
 		}
 	}
 
@@ -396,14 +396,14 @@ int dfu_util(int argc, char **argv)
 	milli_sleep(500);
 #endif
 
-	printf("Opening DFU capable USB device...\n");
+	dfu_printf("Opening DFU capable USB device...\n");
 	ret = libusb_open(dfu_root->dev, &dfu_root->dev_handle);
 	if (ret || !dfu_root->dev_handle)
 		errx(EX_IOERR, "Cannot open device: %s", libusb_error_name(ret));
 
-	printf("ID %04x:%04x\n", dfu_root->vendor, dfu_root->product);
+	dfu_printf("ID %04x:%04x\n", dfu_root->vendor, dfu_root->product);
 
-	printf("Run-time device DFU version %04x\n",
+	dfu_printf("Run-time device DFU version %04x\n",
 	       libusb_le16_to_cpu(dfu_root->func_dfu.bcdDFUVersion));
 
 	/* Transition from run-Time mode to DFU mode */
@@ -417,7 +417,7 @@ int dfu_util(int argc, char **argv)
 		runtime_vendor = dfu_root->vendor;
 		runtime_product = dfu_root->product;
 
-		printf("Claiming USB DFU Runtime Interface...\n");
+		dfu_printf("Claiming USB DFU Runtime Interface...\n");
 		ret = libusb_claim_interface(dfu_root->dev_handle, dfu_root->interface);
 		if (ret < 0) {
 			errx(EX_IOERR, "Cannot claim interface %d: %s",
@@ -429,11 +429,11 @@ int dfu_util(int argc, char **argv)
 			errx(EX_IOERR, "Cannot set alt interface zero: %s", libusb_error_name(ret));
 		}
 
-		printf("Determining device status: ");
+		dfu_printf("Determining device status: ");
 
 		err = dfu_get_status(dfu_root, &status);
 		if (err == LIBUSB_ERROR_PIPE) {
-			printf("Device does not implement get_status, assuming appIDLE\n");
+			dfu_printf("Device does not implement get_status, assuming appIDLE\n");
 			status.bStatus = DFU_STATUS_OK;
 			status.bwPollTimeout = 0;
 			status.bState  = DFU_STATE_appIDLE;
@@ -441,7 +441,7 @@ int dfu_util(int argc, char **argv)
 		} else if (err < 0) {
 			errx(EX_IOERR, "error get_status");
 		} else {
-			printf("state = %s, status = %d\n",
+			dfu_printf("state = %s, status = %d\n",
 			       dfu_state_to_string(status.bState), status.bStatus);
 		}
 		milli_sleep(status.bwPollTimeout);
@@ -449,16 +449,16 @@ int dfu_util(int argc, char **argv)
 		switch (status.bState) {
 		case DFU_STATE_appIDLE:
 		case DFU_STATE_appDETACH:
-			printf("Device really in Runtime Mode, send DFU "
+			dfu_printf("Device really in Runtime Mode, send DFU "
 			       "detach request...\n");
 			if (dfu_detach(dfu_root->dev_handle,
 				       dfu_root->interface, 1000) < 0) {
 				warnx("error detaching");
 			}
 			if (dfu_root->func_dfu.bmAttributes & USB_DFU_WILL_DETACH) {
-				printf("Device will detach and reattach...\n");
+				dfu_printf("Device will detach and reattach...\n");
 			} else {
-				printf("Resetting USB...\n");
+				dfu_printf("Resetting USB...\n");
 				ret = libusb_reset_device(dfu_root->dev_handle);
 				if (ret < 0 && ret != LIBUSB_ERROR_NOT_FOUND)
 					errx(EX_IOERR, "error resetting "
@@ -466,7 +466,7 @@ int dfu_util(int argc, char **argv)
 			}
 			break;
 		case DFU_STATE_dfuERROR:
-			printf("dfuERROR, clearing status\n");
+			dfu_printf("dfuERROR, clearing status\n");
 			if (dfu_clear_status(dfu_root->dev_handle,
 					     dfu_root->interface) < 0) {
 				errx(EX_IOERR, "error clear_status");
@@ -511,7 +511,7 @@ int dfu_util(int argc, char **argv)
 		if (!(dfu_root->flags | DFU_IFF_DFU))
 			errx(EX_SOFTWARE, "Device is not in DFU mode");
 
-		printf("Opening DFU USB Device...\n");
+		dfu_printf("Opening DFU USB Device...\n");
 		ret = libusb_open(dfu_root->dev, &dfu_root->dev_handle);
 		if (ret || !dfu_root->dev_handle) {
 			errx(EX_IOERR, "Cannot open device");
@@ -527,31 +527,31 @@ int dfu_util(int argc, char **argv)
 
 dfustate:
 #if 0
-	printf("Setting Configuration %u...\n", dfu_root->configuration);
+	dfu_printf("Setting Configuration %u...\n", dfu_root->configuration);
 	ret = libusb_set_configuration(dfu_root->dev_handle, dfu_root->configuration);
 	if (ret < 0) {
 		errx(EX_IOERR, "Cannot set configuration: %s", libusb_error_name(ret));
 	}
 #endif
-	printf("Claiming USB DFU Interface...\n");
+	dfu_printf("Claiming USB DFU Interface...\n");
 	ret = libusb_claim_interface(dfu_root->dev_handle, dfu_root->interface);
 	if (ret < 0) {
 		errx(EX_IOERR, "Cannot claim interface - %s", libusb_error_name(ret));
 	}
 
-	printf("Setting Alternate Setting #%d ...\n", dfu_root->altsetting);
+	dfu_printf("Setting Alternate Setting #%d ...\n", dfu_root->altsetting);
 	ret = libusb_set_interface_alt_setting(dfu_root->dev_handle, dfu_root->interface, dfu_root->altsetting);
 	if (ret < 0) {
 		errx(EX_IOERR, "Cannot set alternate interface: %s", libusb_error_name(ret));
 	}
 
 status_again:
-	printf("Determining device status: ");
+	dfu_printf("Determining device status: ");
 	ret = dfu_get_status(dfu_root, &status );
 	if (ret < 0) {
 		errx(EX_IOERR, "error get_status: %s", libusb_error_name(ret));
 	}
-	printf("state = %s, status = %d\n",
+	dfu_printf("state = %s, status = %d\n",
 	       dfu_state_to_string(status.bState), status.bStatus);
 
 	milli_sleep(status.bwPollTimeout);
@@ -562,7 +562,7 @@ status_again:
 		errx(EX_IOERR, "Device still in Runtime Mode!");
 		break;
 	case DFU_STATE_dfuERROR:
-		printf("dfuERROR, clearing status\n");
+		dfu_printf("dfuERROR, clearing status\n");
 		if (dfu_clear_status(dfu_root->dev_handle, dfu_root->interface) < 0) {
 			errx(EX_IOERR, "error clear_status");
 		}
@@ -570,21 +570,21 @@ status_again:
 		break;
 	case DFU_STATE_dfuDNLOAD_IDLE:
 	case DFU_STATE_dfuUPLOAD_IDLE:
-		printf("aborting previous incomplete transfer\n");
+		dfu_printf("aborting previous incomplete transfer\n");
 		if (dfu_abort(dfu_root->dev_handle, dfu_root->interface) < 0) {
 			errx(EX_IOERR, "can't send DFU_ABORT");
 		}
 		goto status_again;
 		break;
 	case DFU_STATE_dfuIDLE:
-		printf("dfuIDLE, continuing\n");
+		dfu_printf("dfuIDLE, continuing\n");
 		break;
 	default:
 		break;
 	}
 
 	if (DFU_STATUS_OK != status.bStatus ) {
-		printf("WARNING: DFU Status: '%s'\n",
+		dfu_printf("WARNING: DFU Status: '%s'\n",
 			dfu_status_to_string(status.bStatus));
 		/* Clear our status & try again. */
 		if (dfu_clear_status(dfu_root->dev_handle, dfu_root->interface) < 0)
@@ -597,7 +597,7 @@ status_again:
 		milli_sleep(status.bwPollTimeout);
 	}
 
-	printf("DFU mode device DFU version %04x\n",
+	dfu_printf("DFU mode device DFU version %04x\n",
 	       libusb_le16_to_cpu(dfu_root->func_dfu.bcdDFUVersion));
 
 	if (dfu_root->func_dfu.bcdDFUVersion == libusb_cpu_to_le16(0x11a))
@@ -608,7 +608,7 @@ status_again:
 		transfer_size = libusb_le16_to_cpu(
 		    dfu_root->func_dfu.wTransferSize);
 		if (transfer_size) {
-			printf("Device returned transfer size %i\n",
+			dfu_printf("Device returned transfer size %i\n",
 			       transfer_size);
 		} else {
 			errx(EX_IOERR, "Transfer size must be specified");
@@ -621,14 +621,14 @@ status_again:
 	/* limitation of Linux usbdevio */
 	if ((int)transfer_size > getpagesize()) {
 		transfer_size = getpagesize();
-		printf("Limited transfer size to %i\n", transfer_size);
+		dfu_printf("Limited transfer size to %i\n", transfer_size);
 	}
 #endif /* __MINGW32__ */
 #endif /* HAVE_GETPAGESIZE */
 
 	if (transfer_size < dfu_root->bMaxPacketSize0) {
 		transfer_size = dfu_root->bMaxPacketSize0;
-		printf("Adjusted transfer size to %i\n", transfer_size);
+		dfu_printf("Adjusted transfer size to %i\n", transfer_size);
 	}
 
 	switch (mode) {
@@ -687,7 +687,7 @@ status_again:
                            device in a known state */
 			warnx("can't detach");
 		}
-		printf("Resetting USB to switch back to runtime mode\n");
+		dfu_printf("Resetting USB to switch back to runtime mode\n");
 		ret = libusb_reset_device(dfu_root->dev_handle);
 		if (ret < 0 && ret != LIBUSB_ERROR_NOT_FOUND) {
 			errx(EX_IOERR, "error resetting after download: %s", libusb_error_name(ret));

@@ -40,7 +40,7 @@ int verbose;
 
 static void help(void)
 {
-	fprintf(stderr, "Usage: dfu-prefix [options] ...\n"
+	fdfu_printf(stderr, "Usage: dfu-prefix [options] ...\n"
 		"  -h --help\t\t\tPrint this help message\n"
 		"  -V --version\t\t\tPrint the version number\n"
 		"  -c --check <file>\t\tCheck DFU prefix of <file>\n"
@@ -48,7 +48,7 @@ static void help(void)
 		"  -a --add <file>\t\tAdd DFU prefix to <file>\n"
 		"In combination with -a:\n"
 		);
-	fprintf(stderr, "  -s --stellaris-address <address>  Add TI Stellaris address prefix to <file>\n"
+	fdfu_printf(stderr, "  -s --stellaris-address <address>  Add TI Stellaris address prefix to <file>\n"
 		"In combination with -D or -c:\n"
 		"  -T --stellaris\t\tAct on TI Stellaris address prefix of <file>\n"
 		"In combination with -a or -D or -c:\n"
@@ -59,8 +59,8 @@ static void help(void)
 
 static void print_version(void)
 {
-	printf("dfu-prefix (%s) %s\n\n", PACKAGE, PACKAGE_VERSION);
-	printf("Copyright 2011-2012 Stefan Schmidt, 2014 Uwe Bonnes\n"
+	dfu_printf("dfu-prefix (%s) %s\n\n", PACKAGE, PACKAGE_VERSION);
+	dfu_printf("Copyright 2011-2012 Stefan Schmidt, 2014 Uwe Bonnes\n"
 	       "This program is Free Software and has ABSOLUTELY NO WARRANTY\n"
 	       "Please report bugs to %s\n\n", PACKAGE_BUGREPORT);
 
@@ -137,7 +137,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!file.name) {
-		fprintf(stderr, "You need to specify a filename\n");
+		fdfu_printf(stderr, "You need to specify a filename\n");
 		help();
 	}
 
@@ -148,7 +148,7 @@ int main(int argc, char **argv)
 		dfu_load_file(&file, MAYBE_SUFFIX, NO_PREFIX);
 		file.lmdfu_address = lmdfu_flash_address;
 		file.prefix_type = type;
-		printf("Adding prefix to file\n");
+		dfu_printf("Adding prefix to file\n");
 		dfu_store_file(&file, file.size.suffix != 0, 1);
 		break;
 
@@ -163,7 +163,7 @@ int main(int argc, char **argv)
 		dfu_load_file(&file, MAYBE_SUFFIX, NEEDS_PREFIX);
 		if (type > ZERO_PREFIX && file.prefix_type != type)
 			errx(EX_IOERR, "No prefix of requested type");
-		printf("Removing prefix from file\n");
+		dfu_printf("Removing prefix from file\n");
 		/* if there was a suffix, rewrite it */
 		dfu_store_file(&file, file.size.suffix != 0, 0);
 		break;

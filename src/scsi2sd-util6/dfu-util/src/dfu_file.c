@@ -142,11 +142,11 @@ void dfu_progress_bar(const char *desc, unsigned long long curr,
 	}
 	buf[x] = 0;
 
-	printf("\r%s\t[%s] %3lld%% %12lld bytes", desc, buf,
+	dfu_printf("\r%s\t[%s] %3lld%% %12lld bytes", desc, buf,
 	    (100ULL * curr) / max, curr);
 
 	if (progress == PROGRESS_BAR_WIDTH)
-		printf("\n%s done.\n", desc);
+		dfu_printf("\n%s done.\n", desc);
 }
 
 void *dfu_malloc(size_t size)
@@ -210,7 +210,7 @@ void dfu_load_file(struct dfu_file *file, enum suffix_req check_suffix, enum pre
 			file->size.total += read_bytes;
 		}
 		if (verbose)
-			printf("Read %i bytes from stdin\n", file->size.total);
+			dfu_printf("Read %i bytes from stdin\n", file->size.total);
 		/* Never require suffix when reading from stdin */
 		check_suffix = MAYBE_SUFFIX;
 	} else {
@@ -280,7 +280,7 @@ void dfu_load_file(struct dfu_file *file, enum suffix_req check_suffix, enum pre
 		file->bcdDFU = (dfusuffix[7] << 8) + dfusuffix[6];
 
 		if (verbose)
-			printf("DFU suffix version %x\n", file->bcdDFU);
+			dfu_printf("DFU suffix version %x\n", file->bcdDFU);
 
 		file->size.suffix = dfusuffix[11];
 
@@ -322,7 +322,7 @@ checked:
 	if (file->size.prefix && verbose) {
 		uint8_t *data = file->firmware;
 		if (file->prefix_type == LMDFU_PREFIX)
-			printf("Possible TI Stellaris DFU prefix with "
+			dfu_printf("Possible TI Stellaris DFU prefix with "
 				   "the following properties\n"
 				   "Address:        0x%08x\n"
 				   "Payload length: %d\n",
@@ -330,7 +330,7 @@ checked:
 				   data[4] | (data[5] << 8) |
 				   (data[6] << 16) | (data[7] << 14));
 		else if (file->prefix_type == LPCDFU_UNENCRYPTED_PREFIX)
-			printf("Possible unencrypted NXP LPC DFU prefix with "
+			dfu_printf("Possible unencrypted NXP LPC DFU prefix with "
 				   "the following properties\n"
 				   "Payload length: %d kiByte\n",
 				   data[2] >>1 | (data[3] << 7) );
@@ -423,22 +423,22 @@ void dfu_store_file(struct dfu_file *file, int write_suffix, int write_prefix)
 void show_suffix_and_prefix(struct dfu_file *file)
 {
 	if (file->size.prefix == LMDFU_PREFIX_LENGTH) {
-		printf("The file %s contains a TI Stellaris DFU prefix with the following properties:\n", file->name);
-		printf("Address:\t0x%08x\n", file->lmdfu_address);
+		dfu_printf("The file %s contains a TI Stellaris DFU prefix with the following properties:\n", file->name);
+		dfu_printf("Address:\t0x%08x\n", file->lmdfu_address);
 	} else if (file->size.prefix == LPCDFU_PREFIX_LENGTH) {
 		uint8_t * prefix = file->firmware;
-		printf("The file %s contains a NXP unencrypted LPC DFU prefix with the following properties:\n", file->name);
-		printf("Size:\t%5d kiB\n", prefix[2]>>1|prefix[3]<<7);
+		dfu_printf("The file %s contains a NXP unencrypted LPC DFU prefix with the following properties:\n", file->name);
+		dfu_printf("Size:\t%5d kiB\n", prefix[2]>>1|prefix[3]<<7);
 	} else if (file->size.prefix != 0) {
-		printf("The file %s contains an unknown prefix\n", file->name);
+		dfu_printf("The file %s contains an unknown prefix\n", file->name);
 	}
 	if (file->size.suffix > 0) {
-		printf("The file %s contains a DFU suffix with the following properties:\n", file->name);
-		printf("BCD device:\t0x%04X\n", file->bcdDevice);
-		printf("Product ID:\t0x%04X\n",file->idProduct);
-		printf("Vendor ID:\t0x%04X\n", file->idVendor);
-		printf("BCD DFU:\t0x%04X\n", file->bcdDFU);
-		printf("Length:\t\t%i\n", file->size.suffix);
-		printf("CRC:\t\t0x%08X\n", file->dwCRC);
+		dfu_printf("The file %s contains a DFU suffix with the following properties:\n", file->name);
+		dfu_printf("BCD device:\t0x%04X\n", file->bcdDevice);
+		dfu_printf("Product ID:\t0x%04X\n",file->idProduct);
+		dfu_printf("Vendor ID:\t0x%04X\n", file->idVendor);
+		dfu_printf("BCD DFU:\t0x%04X\n", file->bcdDFU);
+		dfu_printf("Length:\t\t%i\n", file->size.suffix);
+		dfu_printf("CRC:\t\t0x%08X\n", file->dwCRC);
 	}
 }

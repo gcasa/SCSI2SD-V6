@@ -50,7 +50,7 @@ int dfuload_do_upload(struct dfu_if *dif, int xfer_size,
 
 	buf = dfu_malloc(xfer_size);
 
-	printf("Copying data from DFU device to PC\n");
+	dfu_printf("Copying data from DFU device to PC\n");
 
 	while (1) {
 		int rc;
@@ -80,12 +80,12 @@ int dfuload_do_upload(struct dfu_if *dif, int xfer_size,
 		dfu_progress_bar("Upload", total_bytes, total_bytes);
 	} else {
 		dfu_progress_bar("Upload", total_bytes, expected_size);
-		printf("\n");
+		dfu_printf("\n");
 	}
 	if (total_bytes == 0)
-		printf("\nFailed.\n");
+		dfu_printf("\nFailed.\n");
 	if (verbose)
-		printf("Received a total of %i bytes\n", total_bytes);
+		dfu_printf("Received a total of %i bytes\n", total_bytes);
 	if (expected_size != 0 && total_bytes != expected_size)
 		errx(EX_SOFTWARE, "Unexpected number of bytes uploaded from device");
 	return ret;
@@ -100,7 +100,7 @@ int dfuload_do_dnload(struct dfu_if *dif, int xfer_size, struct dfu_file *file)
 	struct dfu_status dst;
 	int ret;
 
-	printf("Copying data from PC to DFU device\n");
+	dfu_printf("Copying data from PC to DFU device\n");
 
 	buf = file->firmware;
 	expected_size = file->size.total - file->size.suffix;
@@ -142,8 +142,8 @@ int dfuload_do_dnload(struct dfu_if *dif, int xfer_size, struct dfu_file *file)
 
 		} while (1);
 		if (dst.bStatus != DFU_STATUS_OK) {
-			printf(" failed!\n");
-			printf("state(%u) = %s, status(%u) = %s\n", dst.bState,
+			dfu_printf(" failed!\n");
+			dfu_printf("state(%u) = %s, status(%u) = %s\n", dst.bState,
 				dfu_state_to_string(dst.bState), dst.bStatus,
 				dfu_status_to_string(dst.bStatus));
 			ret = -1;
@@ -163,7 +163,7 @@ int dfuload_do_dnload(struct dfu_if *dif, int xfer_size, struct dfu_file *file)
 	dfu_progress_bar("Download", bytes_sent, bytes_sent);
 
 	if (verbose)
-		printf("Sent a total of %i bytes\n", bytes_sent);
+		dfu_printf("Sent a total of %i bytes\n", bytes_sent);
 
 get_status:
 	/* Transition to MANIFEST_SYNC state */
@@ -172,7 +172,7 @@ get_status:
 		warnx("unable to read DFU status after completion");
 		goto out;
 	}
-	printf("state(%u) = %s, status(%u) = %s\n", dst.bState,
+	dfu_printf("state(%u) = %s, status(%u) = %s\n", dst.bState,
 		dfu_state_to_string(dst.bState), dst.bStatus,
 		dfu_status_to_string(dst.bStatus));
 
@@ -190,7 +190,7 @@ get_status:
 	case DFU_STATE_dfuIDLE:
 		break;
 	}
-	printf("Done!\n");
+	dfu_printf("Done!\n");
 
 out:
 	return bytes_sent;
