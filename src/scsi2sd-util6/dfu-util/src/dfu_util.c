@@ -347,9 +347,9 @@ char *get_path(libusb_device *dev)
 	int r,j;
 	r = libusb_get_port_numbers(dev, path, sizeof(path));
 	if (r > 0) {
-		sdfu_printf(path_buf,"%d-%d",libusb_get_bus_number(dev),path[0]);
+		sprintf(path_buf,"%d-%d",libusb_get_bus_number(dev),path[0]);
 		for (j = 1; j < r; j++){
-			sdfu_printf(path_buf+strlen(path_buf),".%d",path[j]);
+			sprintf(path_buf+strlen(path_buf),".%d",path[j]);
 		};
 	}
 	return path_buf;
