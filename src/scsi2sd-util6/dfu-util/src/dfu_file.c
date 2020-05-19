@@ -147,6 +147,8 @@ void dfu_progress_bar(const char *desc, unsigned long long curr,
 
 	if (progress == PROGRESS_BAR_WIDTH)
 		dfu_printf("\n%s done.\n", desc);
+
+	dfu_report_progress((double)((100ULL * curr) / max));
 }
 
 void *dfu_malloc(size_t size)

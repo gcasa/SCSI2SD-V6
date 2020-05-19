@@ -20,6 +20,7 @@
 #define TIMER_INTERVAL 0.1
 
 NSString *dfuOutputNotification = @"DFUOutputNotification";
+NSString *dfuProgressNotification = @"DFUProgressNotification";
 
 extern "C" {
 
@@ -36,6 +37,13 @@ void dfu_printf(char *format, ...)
      postNotificationName: dfuOutputNotification
      object: formatString];
     va_end(args);
+}
+
+void dfu_report_progress(double percent)
+{
+    [[NSNotificationCenter defaultCenter]
+     postNotificationName: dfuProgressNotification
+     object: [NSNumber numberWithDouble:percent]];
 }
 
 }
@@ -247,8 +255,44 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
 
 - (void) handleDFUNotification: (NSNotification *)notification
 {
+    if ([NSThread currentThread] != [NSThread mainThread])
+    {
+        [self performSelectorOnMainThread:_cmd
+                               withObject:notification
+                            waitUntilDone:YES];
+        return;
+    }
+    
     NSString *s = [notification object];
     [self logStringToDFUPanel:s];
+}
+
+- (void) handleDFUProgressNotification: (NSNotification *)notification
+{
+    if ([NSThread currentThread] != [NSThread mainThread])
+    {
+        [self performSelectorOnMainThread:_cmd
+                               withObject:notification
+                            waitUntilDone:YES];
+        return;
+    }
+    
+    NSNumber *n = [notification object];
+    if ([n doubleValue] < 100.0)
+    {
+        [self showProgress:self];
+    }
+    else
+    {
+        NSAlert *alert = [[NSAlert alloc] init];
+
+        [self hideProgress:self];
+
+        alert.messageText = @"DFU Update Complete";
+        alert.informativeText = @"The USB bus has been reset.  Please disconnect and reconnect device and restart application.";
+        [alert runModal];
+    }
+    [self updateProgress:n];
 }
 
 // Initialize everything once we finish launching...
@@ -292,6 +336,11 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleDFUNotification:)
                                                  name:dfuOutputNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleDFUProgressNotification:)
+                                                 name:dfuProgressNotification
                                                object:nil];
     
     [self startTimer];
@@ -739,7 +788,9 @@ out:
         [self logStringToPanel: @"SCSI2SD-V6 requires .dfu extension"];
     }
 
-    [self.dfuPanel orderFrontRegardless];
+    [self.dfuPanel performSelectorOnMainThread: @selector( orderFrontRegardless )
+                                    withObject: nil
+                                 waitUntilDone: YES];
     
     [self stopTimer];
     
