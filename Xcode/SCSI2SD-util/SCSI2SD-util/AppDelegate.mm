@@ -19,8 +19,25 @@
 // #include "ConfigUtil.hh"
 #define TIMER_INTERVAL 0.1
 
+NSString *dfuOutputNotification = @"DFUOutputNotification";
+
 extern "C" {
-    int dfu_util(int argc, char **argv); // our one and only interface with the dfu library...
+
+int dfu_util(int argc, char **argv); // our one and only interface with the dfu library...
+
+void dfu_printf(char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    NSString *fmt = [NSString stringWithCString:format encoding:NSUTF8StringEncoding];
+    NSString *formatString = [[NSString alloc] initWithFormat:fmt arguments:args];
+    // NSLog(@"formatString = %@", formatString);
+    [[NSNotificationCenter defaultCenter]
+     postNotificationName: dfuOutputNotification
+     object: formatString];
+    va_end(args);
+}
+
 }
 
 void clean_exit_on_sig(int sig_num)
@@ -52,36 +69,14 @@ char** convertNSArrayToCArrayForMain(NSArray *array)
     return convertNSArrayToCArray([narray copy]);
 }
 
-#define MIN_FIRMWARE_VERSION 0x0400
-#define MIN_FIRMWARE_VERSION 0x0400
-
-/*
-static uint8_t sdCrc7(uint8_t* chr, uint8_t cnt, uint8_t crc)
-{
-    uint8_t a;
-    for(a = 0; a < cnt; a++)
-    {
-        uint8_t data = chr[a];
-        uint8_t i;
-        for(i = 0; i < 8; i++)
-        {
-            crc <<= 1;
-            if ((data & 0x80) ^ (crc & 0x80))
-            {
-                crc ^= 0x09;
-            }
-            data <<= 1;
-        }
-    }
-    return crc & 0x7F;
-}*/
-
-
 BOOL RangesIntersect(NSRange range1, NSRange range2) {
     if(range1.location > range2.location + range2.length) return NO;
     if(range2.location > range1.location + range1.length) return NO;
     return YES;
 }
+
+#define MIN_FIRMWARE_VERSION 0x0400
+#define MIN_FIRMWARE_VERSION 0x0400
 
 @interface AppDelegate ()
 {
@@ -92,7 +87,9 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
 @property (nonatomic) IBOutlet NSWindow *mainWindow;
 @property (nonatomic) IBOutlet NSTextField *infoLabel;
 @property (nonatomic) IBOutlet NSPanel *logPanel;
+@property (nonatomic) IBOutlet NSPanel *dfuPanel;
 @property (nonatomic) IBOutlet NSTextView *logTextView;
+@property (nonatomic) IBOutlet NSTextView *dfuTextView;
 @property (nonatomic) IBOutlet NSTabView *tabView;
 
 @property (nonatomic) IBOutlet DeviceController *device1;
@@ -144,6 +141,14 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     [self.logTextView scrollToEndOfDocument:self];
 }
 
+- (void) outputToDFUPanel: (NSString* )formatString
+{
+    NSString *string = [self.dfuTextView string];
+    string = [string stringByAppendingString: formatString];
+    [self.dfuTextView setString: string];
+    [self.dfuTextView scrollToEndOfDocument:self];
+}
+
 // Output to the debug info panel...
 - (void) logStringToPanel: (NSString *)format, ...
 {
@@ -165,6 +170,18 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     [self.infoLabel performSelectorOnMainThread:@selector(setStringValue:)
                                      withObject:formatString
                                   waitUntilDone:YES];
+    va_end(args);
+}
+
+// dfu panel logging...
+- (void) logStringToDFUPanel: (NSString *)format, ...
+{
+    va_list args;
+    va_start(args, format);
+    NSString *formatString = [[NSString alloc] initWithFormat:format arguments:args];
+    [self performSelectorOnMainThread:@selector(outputToDFUPanel:)
+                           withObject:formatString
+                        waitUntilDone:YES];
     va_end(args);
 }
 
@@ -228,6 +245,12 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     }
 }
 
+- (void) handleDFUNotification: (NSNotification *)notification
+{
+    NSString *s = [notification object];
+    [self logStringToDFUPanel:s];
+}
+
 // Initialize everything once we finish launching...
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
@@ -265,6 +288,11 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     
     doScsiSelfTest = NO;
     shouldLogScsiData = NO;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleDFUNotification:)
+                                                 name:dfuOutputNotification
+                                               object:nil];
     
     [self startTimer];
     aLock = [[NSLock alloc] init];
@@ -711,6 +739,8 @@ out:
         [self logStringToPanel: @"SCSI2SD-V6 requires .dfu extension"];
     }
 
+    [self.dfuPanel orderFrontRegardless];
+    
     [self stopTimer];
     
     while (true)
