@@ -554,6 +554,12 @@
                                     <action selector="makeKeyAndOrderFront:" target="H9u-55-H3N" id="yKa-Xg-Ywp"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="DFU Window" id="5QT-lq-SGz">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="makeKeyAndOrderFront:" target="0Kb-9m-aMM" id="ldC-33-KTZ"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="eu3-7i-yIM"/>
                             <menuItem title="Bring All to Front" id="LE2-aR-0XJ">
                                 <modifierMask key="keyEquivalentModifierMask"/>
