@@ -40,7 +40,7 @@ int verbose;
 
 static void help(void)
 {
-	fdfu_printf(stderr, "Usage: dfu-prefix [options] ...\n"
+	fprintf(stderr, "Usage: dfu-prefix [options] ...\n"
 		"  -h --help\t\t\tPrint this help message\n"
 		"  -V --version\t\t\tPrint the version number\n"
 		"  -c --check <file>\t\tCheck DFU prefix of <file>\n"
@@ -48,7 +48,7 @@ static void help(void)
 		"  -a --add <file>\t\tAdd DFU prefix to <file>\n"
 		"In combination with -a:\n"
 		);
-	fdfu_printf(stderr, "  -s --stellaris-address <address>  Add TI Stellaris address prefix to <file>\n"
+	fprintf(stderr, "  -s --stellaris-address <address>  Add TI Stellaris address prefix to <file>\n"
 		"In combination with -D or -c:\n"
 		"  -T --stellaris\t\tAct on TI Stellaris address prefix of <file>\n"
 		"In combination with -a or -D or -c:\n"
@@ -137,7 +137,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!file.name) {
-		fdfu_printf(stderr, "You need to specify a filename\n");
+		fprintf(stderr, "You need to specify a filename\n");
 		help();
 	}
 

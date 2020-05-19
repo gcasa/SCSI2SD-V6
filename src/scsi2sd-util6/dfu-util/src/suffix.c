@@ -40,7 +40,7 @@ int verbose;
 
 static void help(void)
 {
-	fdfu_printf(stderr, "Usage: dfu-suffix [options] ...\n"
+	fprintf(stderr, "Usage: dfu-suffix [options] ...\n"
 		"  -h --help\t\t\tPrint this help message\n"
 		"  -V --version\t\t\tPrint the version number\n"
 		"  -c --check <file>\t\tCheck DFU suffix of <file>\n"
@@ -135,12 +135,12 @@ int main(int argc, char **argv)
 	}
 
 	if (!file.name) {
-		fdfu_printf(stderr, "You need to specify a filename\n");
+		fprintf(stderr, "You need to specify a filename\n");
 		help();
 	}
 
 	if (spec != 0x0100 && spec != 0x011a) {
-		fdfu_printf(stderr, "Only DFU specification 0x0100 and 0x011a supported\n");
+		fprintf(stderr, "Only DFU specification 0x0100 and 0x011a supported\n");
 		help();
 	}
 

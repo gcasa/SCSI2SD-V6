@@ -162,12 +162,12 @@ static int parse_number(char *str, char *nmb)
 
 static void help(void)
 {
-	fdfu_printf(stderr, "Usage: dfu-util [options] ...\n"
+	fprintf(stderr, "Usage: dfu-util [options] ...\n"
 		"  -h --help\t\t\tPrint this help message\n"
 		"  -V --version\t\t\tPrint the version number\n"
 		"  -v --verbose\t\t\tPrint verbose debug statements\n"
 		"  -l --list\t\t\tList currently attached DFU capable devices\n");
-	fdfu_printf(stderr, "  -e --detach\t\t\tDetach currently attached DFU capable devices\n"
+	fprintf(stderr, "  -e --detach\t\t\tDetach currently attached DFU capable devices\n"
 		"  -E --detach-delay seconds\tTime to wait before reopening a device after detach\n"
 		"  -d --device <vendor>:<product>[,<vendor_dfu>:<product_dfu>]\n"
 		"\t\t\t\tSpecify Vendor/Product ID(s) of DFU device\n"
@@ -178,7 +178,7 @@ static void help(void)
 		"\t\t\t\tSpecify Serial String of DFU device\n"
 		"  -a --alt <alt>\t\tSpecify the Altsetting of the DFU Interface\n"
 		"\t\t\t\tby name or by number\n");
-	fdfu_printf(stderr, "  -t --transfer-size <size>\tSpecify the number of bytes per USB Transfer\n"
+	fprintf(stderr, "  -t --transfer-size <size>\tSpecify the number of bytes per USB Transfer\n"
 		"  -U --upload <file>\t\tRead firmware from device into <file>\n"
 		"  -Z --upload-size <bytes>\tSpecify the expected upload size in bytes\n"
 		"  -D --download <file>\t\tWrite firmware from <file> into device\n"
@@ -335,7 +335,7 @@ int dfu_util(int argc, char **argv)
 	}
 
 	if (mode == MODE_NONE) {
-		fdfu_printf(stderr, "You need to specify one of -D or -U\n");
+		fprintf(stderr, "You need to specify one of -D or -U\n");
 		help();
 	}
 
