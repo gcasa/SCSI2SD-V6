@@ -142,8 +142,10 @@ void dfu_progress_bar(const char *desc, unsigned long long curr,
 	}
 	buf[x] = 0;
 
-	dfu_printf("\r%s\t[%s] %3lld%% %12lld bytes", desc, buf,
+	dfu_printf("\n%s [%s] %3ld %12ld bytes", desc, buf,
 	    (100ULL * curr) / max, curr);
+	// dfu_printf("\r%s\t[%s] %3lld%% %12lld bytes", desc, buf,
+	//    (100ULL * curr) / max, curr);
 
 	if (progress == PROGRESS_BAR_WIDTH)
 		dfu_printf("\n%s done.\n", desc);
