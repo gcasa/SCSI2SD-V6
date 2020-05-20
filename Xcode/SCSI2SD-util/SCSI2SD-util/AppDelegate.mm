@@ -289,7 +289,7 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
         [self hideProgress:self];
 
         alert.messageText = @"DFU Update Complete";
-        alert.informativeText = @"The USB bus has been reset.  Please disconnect and reconnect device and restart application.";
+        alert.informativeText = @"The USB bus has been reset.  Please disconnect and reconnect device.";
         [alert runModal];
     }
     [self updateProgress:n];
@@ -792,7 +792,9 @@ out:
                                     withObject: nil
                                  waitUntilDone: YES];
     
-    [self stopTimer];
+    [self performSelectorOnMainThread:@selector(stopTimer)
+                           withObject:nil
+                        waitUntilDone:YES];
     
     while (true)
     {
@@ -828,7 +830,9 @@ out:
         }
     }
     
-    [self startTimer];
+    [self performSelectorOnMainThread:@selector(startTimer)
+                           withObject:nil
+                        waitUntilDone:YES];
 }
 
 - (void) upgradeFirmwareEnd: (NSOpenPanel *)panel
