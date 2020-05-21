@@ -343,6 +343,10 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
                                                  name:dfuProgressNotification
                                                object:nil];
     
+    // Order out...
+    [self.dfuPanel orderOut: self];
+    [self.logPanel orderOut: self];
+    
     [self startTimer];
     aLock = [[NSLock alloc] init];
     [self loadDefaults: nil];
