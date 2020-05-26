@@ -639,7 +639,7 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
         currentProgress += 1;
         if (currentProgress == totalProgress)
         {
-            [self logStringToPanel:  @"\nLoad Complete"];
+            [self logStringToPanel:  @"\nLoad Complete\n"];
         }
 
         std::vector<uint8_t> sdData;
@@ -732,12 +732,12 @@ out:
     uint32_t sector = myHID->getSDCapacity() - 2;
     for (size_t i = 0; i < 2; ++i)
     {
-        [self logStringToPanel: @"\nWriting SD Sector %zu",i];
+        [self logStringToPanel: @"\nWriting SD Sector %zu",sector];
         currentProgress += 1;
 
         if (currentProgress == totalProgress)
         {
-            [self logStringToPanel: @"\nSave Complete"];
+            [self logStringToPanel: @"\nSave Complete\n"];
         }
 
         try
