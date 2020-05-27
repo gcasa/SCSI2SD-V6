@@ -2823,7 +2823,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="3KJ-QQ-yLC">
                             <rect key="frame" x="0.0" y="0.0" width="261" height="378"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <textView importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="IUe-Fz-GvN">
                                     <rect key="frame" x="0.0" y="0.0" width="261" height="378"/>
@@ -2864,7 +2864,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="H32-El-DSP">
                             <rect key="frame" x="0.0" y="0.0" width="261" height="378"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <textView importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="m9q-Cf-8kY">
                                     <rect key="frame" x="0.0" y="0.0" width="261" height="378"/>
