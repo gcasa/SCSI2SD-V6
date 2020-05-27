@@ -39,7 +39,7 @@ int main(int argc, const char * argv[]) {
                 {
                     printf("Saving file to filesystem from device: %s\n", f);
                     parseSuccessful = YES;
-                    [task saveFromDeviceFromFilename:filename];
+                    [task saveFromDeviceToFilename:filename];
                 }
                 else if([[arguments objectAtIndex:1] isEqualToString:@"-l"])
                 {

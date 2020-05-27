@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		141C5F6F247E261F00CB8719 /* libdfu-util.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 144F109E245DC47B00655924 /* libdfu-util.a */; };
 		144F109F245DC47C00655924 /* libdfu-util.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 144F109E245DC47B00655924 /* libdfu-util.a */; };
 		146A539223BBEB800000A06B /* ConfigObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 146A539123BBEB800000A06B /* ConfigObject.mm */; };
 		1482B1E923973F3E001BA513 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1482B1E823973F3E001BA513 /* AppDelegate.mm */; };
@@ -116,6 +117,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				14C63FE9244A339500848412 /* libusb-1.0.0.dylib in Frameworks */,
+				141C5F6F247E261F00CB8719 /* libdfu-util.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
