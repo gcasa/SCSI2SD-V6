@@ -652,6 +652,7 @@ std::pair<S2S_BoardCfg, std::vector<S2S_TargetCfg>>
 ConfigUtil::fromXML(const std::string& filename)
 {
     NSData *data = [NSData dataWithContentsOfFile: [NSString stringWithUTF8String:filename.c_str()]];
+    
     NSXMLDocument *doc = [[NSXMLDocument alloc] initWithData: data
                                                      options: NSXMLNodeOptionsNone
                                                        error: NULL];

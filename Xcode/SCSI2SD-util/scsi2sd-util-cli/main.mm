@@ -13,10 +13,13 @@ int main(int argc, const char * argv[]) {
     @autoreleasepool {
         NSProcessInfo *info = [NSProcessInfo processInfo];
         SCSI2SDTask *task = [SCSI2SDTask task];
-        NSMutableArray *arguments = @[@"", @"-s", @"out.xml"]; //[NSMutableArray arrayWithArray:info.arguments];
+        // NSMutableArray *arguments = @[@"", @"-s", @"out.xml"];
+        NSMutableArray *arguments = [NSMutableArray arrayWithArray:info.arguments];
         BOOL parseSuccessful = NO;
         BOOL repeatMode = NO;
-        
+
+        puts("=== SCSI2SD-v6-util-cli utility v1.0 ===");
+
         if([arguments count] == 4)
         {
             NSUInteger indx = [arguments indexOfObject: @"-r"];
@@ -30,7 +33,6 @@ int main(int argc, const char * argv[]) {
         
         if([arguments count] == 3) // arguments includes the command...
         {
-            puts("=== SCSI2SD-util-cli utility v1.0 ===");
             do
             {
                 NSString *filename = [arguments objectAtIndex: 2];
@@ -67,10 +69,10 @@ int main(int argc, const char * argv[]) {
         if(parseSuccessful == NO)
         {
             // insert code here...
-            puts("scsi2sd-util-cli usage: ");
+            puts("Usage: ");
             puts("\t-s save_file.xml -- save file from scsi2sd device");
             puts("\t-l load_file.xml -- save file to scsi2sd device");
-            puts("\t-f firmware-file.scsi2sd -- update firmware from file");
+            puts("\t-f firmware-file.dfu -- update firmware from file");
             puts("\t-r repeat operation.  This will cause the tool to loop and search for a connection and repeat the operation.");
         }
     }

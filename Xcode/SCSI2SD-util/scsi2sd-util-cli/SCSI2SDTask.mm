@@ -72,12 +72,32 @@ char** convertNSArrayToCArrayForMain(NSArray *array)
     return task;
 }
 
+- (void) handleDFUProgressNotification: (NSNotification *)note
+{
+    NSNumber *n = (NSNumber *)[note object];
+    // printf("%s percent \r",[[n stringValue] cStringUsingEncoding:NSUTF8StringEncoding]);
+}
+
+- (void) handleDFUNotification: (NSNotification *)note
+{
+    NSString *s = (NSString *)[note object];
+    printf("%s",[s cStringUsingEncoding:NSUTF8StringEncoding]);
+}
+
 - (instancetype) init
 {
     self = [super init];
     if(self)
     {
         self.repeatMode = NO;
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleDFUNotification:)
+                                                     name:dfuOutputNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleDFUProgressNotification:)
+                                                     name:dfuProgressNotification
+                                                   object:nil];
     }
     return self;
 }
@@ -88,7 +108,7 @@ char** convertNSArrayToCArrayForMain(NSArray *array)
     va_list args;
     va_start(args, format);
     NSString *formatString = [[NSString alloc] initWithFormat:format arguments:args];
-    puts([formatString cStringUsingEncoding:NSUTF8StringEncoding]);
+    printf("%s",[formatString cStringUsingEncoding:NSUTF8StringEncoding]);
     va_end(args);
 }
 
@@ -140,49 +160,6 @@ char** convertNSArrayToCArrayForMain(NSArray *array)
     {
         NSLog(@"Exception caught : %s\n", e.what());
     }
-}
-
-- (void) handleDFUNotification: (NSNotification *)notification
-{
-    if ([NSThread currentThread] != [NSThread mainThread])
-    {
-        [self performSelectorOnMainThread:_cmd
-                               withObject:notification
-                            waitUntilDone:YES];
-        return;
-    }
-    
-    NSString *s = [notification object];
-    [self logStringToPanel:s];
-}
-
-- (void) handleDFUProgressNotification: (NSNotification *)notification
-{
-    if ([NSThread currentThread] != [NSThread mainThread])
-    {
-        [self performSelectorOnMainThread:_cmd
-                               withObject:notification
-                            waitUntilDone:YES];
-        return;
-    }
-    
-    NSNumber *n = [notification object];
-    if ([n doubleValue] < 100.0)
-    {
-        [self updateProgress:n];
-    }
-    else
-    {
-        //NSAlert *alert = [[NSAlert alloc] init];
-
-        //[self hideProgress:self];
-
-        //alert.messageText = @"DFU Update Complete";
-        //alert.informativeText = @"The USB bus has been reset.  Please disconnect and reconnect device.";
-        //[alert runModal];
-        puts("DFU Update Completed.  The USB bus has been reset, please disconnect and reconnect the device.\n");
-    }
-    [self updateProgress:n];
 }
 
 - (BOOL) getHid
@@ -358,7 +335,7 @@ char** convertNSArrayToCArrayForMain(NSArray *array)
 
     if (!myHID) return;
 
-    [self logStringToPanel:@"Saving configuration"];
+    [self logStringToPanel:@"\nSaving configuration to Device\n"];
     int currentProgress = 0;
     int totalProgress = 2; // (int)[deviceControllers count]; // * SCSI_CONFIG_ROWS + 1;
 
