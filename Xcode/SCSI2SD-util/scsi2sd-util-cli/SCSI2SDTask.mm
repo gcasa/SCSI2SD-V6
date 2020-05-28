@@ -252,7 +252,6 @@ char** convertNSArrayToCArrayForMain(NSArray *array)
     [outputString writeToFile:filename atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 }
 
-#define NUM_DEVS 4
 - (void) saveFromDeviceToFilename: (NSString *)filename
 {
     BOOL gotHID = [self getHid];
@@ -272,7 +271,7 @@ char** convertNSArrayToCArrayForMain(NSArray *array)
         [self logStringToPanel: @"Couldn't initialize HID configuration"];
     }
 
-     [self logStringToPanel: @"\nLoad config settings"];
+    [self logStringToPanel: @"\nSave config settings from device to file %@", filename];
 
     int currentProgress = 0;
     int totalProgress = 2;
@@ -285,7 +284,7 @@ char** convertNSArrayToCArrayForMain(NSArray *array)
         currentProgress += 1;
         if (currentProgress == totalProgress)
         {
-            [self logStringToPanel:  @"\nLoad Complete\n"];
+            [self logStringToPanel:  @"\nSave from device Complete\n"];
         }
 
         std::vector<uint8_t> sdData;
@@ -305,6 +304,7 @@ char** convertNSArrayToCArrayForMain(NSArray *array)
             &cfgData[i * 512]);
     }
 
+    // Create structures...
     std::vector<S2S_TargetCfg> targetVector;
     for (int i = 0; i < S2S_MAX_TARGETS; ++i)
     {
@@ -313,7 +313,24 @@ char** convertNSArrayToCArrayForMain(NSArray *array)
     }
     std::pair<S2S_BoardCfg, std::vector<S2S_TargetCfg>> pair;
     pair.first = SCSI2SD::ConfigUtil::boardConfigFromBytes(&cfgData[0]);
+    pair.second = targetVector;
     
+    // Build file...
+    NSString *outputString = @"";
+    outputString = [outputString stringByAppendingString: @"<SCSI2SD>\n"];
+    std::string boardXML = SCSI2SD::ConfigUtil::toXML(pair.first);
+    outputString = [outputString stringByAppendingString: [NSString stringWithCString:boardXML.c_str()
+                                                                             encoding:NSUTF8StringEncoding]];
+    for (int i = 0; i < S2S_MAX_TARGETS; ++i)
+    {
+        std::string deviceXML = SCSI2SD::ConfigUtil::toXML(pair.second[i]);
+        outputString = [outputString stringByAppendingString: [NSString stringWithCString:deviceXML.c_str()
+                                                                                 encoding:NSUTF8StringEncoding]];
+    }
+    outputString = [outputString stringByAppendingString: @"</SCSI2SD>\n"];
+    [outputString writeToFile:filename atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+    
+    // Complete progress...
     [self performSelectorOnMainThread:@selector(updateProgress:)
                            withObject:[NSNumber numberWithDouble:(double)100.0]
                         waitUntilDone:NO];
@@ -335,7 +352,7 @@ char** convertNSArrayToCArrayForMain(NSArray *array)
 
     if (!myHID) return;
 
-    [self logStringToPanel:@"\nSaving configuration to Device\n"];
+    [self logStringToPanel:@"\nSaving configuration to Device from %@\n", filename];
     int currentProgress = 0;
     int totalProgress = 2; // (int)[deviceControllers count]; // * SCSI_CONFIG_ROWS + 1;
 
