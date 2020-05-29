@@ -97,7 +97,7 @@
 		14DEC5EE23A4C76000ECD04A /* NSString+Extensions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extensions.m"; sourceTree = "<group>"; };
 		14F2F96323C94A4400169DD2 /* SCSI2SDTask.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SCSI2SDTask.hh; sourceTree = "<group>"; };
 		14F2F96423C94A4400169DD2 /* SCSI2SDTask.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SCSI2SDTask.mm; sourceTree = "<group>"; };
-		14F2F96E23CA2E8B00169DD2 /* scsi2sd-util-v6-cli.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "scsi2sd-util-v6-cli.entitlements"; sourceTree = "<group>"; };
+		14F2F96E23CA2E8B00169DD2 /* scsi2sd-util-cli.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "scsi2sd-util-cli.entitlements"; sourceTree = "<group>"; };
 		26451B5FE5FE6B8B9C117D01 /* libPods-SCSI2SD-util-v6.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SCSI2SD-util-v6.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		39658F20DC40CB44AAC9F0FB /* Pods-SCSI2SD-util-v6.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SCSI2SD-util-v6.debug.xcconfig"; path = "Target Support Files/Pods-SCSI2SD-util-v6/Pods-SCSI2SD-util-v6.debug.xcconfig"; sourceTree = "<group>"; };
 		792CF6FB662A5C9164598673 /* Pods-SCSI2SD-util-v6.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SCSI2SD-util-v6.release.xcconfig"; path = "Target Support Files/Pods-SCSI2SD-util-v6/Pods-SCSI2SD-util-v6.release.xcconfig"; sourceTree = "<group>"; };
@@ -276,7 +276,7 @@
 		14D96BCD23C935330008E7B3 /* scsi2sd-util-v6-cli */ = {
 			isa = PBXGroup;
 			children = (
-				14F2F96E23CA2E8B00169DD2 /* scsi2sd-util-v6-cli.entitlements */,
+				14F2F96E23CA2E8B00169DD2 /* scsi2sd-util-cli.entitlements */,
 				14D96BCE23C935330008E7B3 /* main.mm */,
 				14F2F96323C94A4400169DD2 /* SCSI2SDTask.hh */,
 				14F2F96423C94A4400169DD2 /* SCSI2SDTask.mm */,
@@ -710,7 +710,6 @@
 					"\"IOKit\"",
 					"-framework",
 					"\"CoreFoundation\"",
-					"-l\"Base64\"",
 				);
 				PRODUCT_NAME = "scsi2sd-util-v6-cli";
 			};
@@ -747,7 +746,6 @@
 					"\"IOKit\"",
 					"-framework",
 					"\"CoreFoundation\"",
-					"-l\"Base64\"",
 				);
 				PRODUCT_NAME = "scsi2sd-util-v6-cli";
 			};
