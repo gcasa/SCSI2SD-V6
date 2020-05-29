@@ -119,6 +119,7 @@
     targetConfig.sdSectorStart = self.sdCardStartSector.intValue;
     targetConfig.bytesPerSector = self.sectorSize.intValue;
     targetConfig.scsiSectors = self.sectorCount.intValue;
+    targetConfig.headsPerCylinder = self.headsPerCylinder.intValue;
     strncpy(targetConfig.vendor, [self.vendor.stringValue cStringUsingEncoding:NSUTF8StringEncoding], 8);
     strncpy(targetConfig.prodId, [self.productId.stringValue cStringUsingEncoding:NSUTF8StringEncoding], 16);
     strncpy(targetConfig.revision, [self.revsion.stringValue cStringUsingEncoding:NSUTF8StringEncoding], 4);

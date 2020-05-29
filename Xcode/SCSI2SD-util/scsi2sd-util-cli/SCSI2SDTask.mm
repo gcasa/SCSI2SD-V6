@@ -74,7 +74,7 @@ char** convertNSArrayToCArrayForMain(NSArray *array)
 
 - (void) handleDFUProgressNotification: (NSNotification *)note
 {
-    NSNumber *n = (NSNumber *)[note object];
+    // NSNumber *n = (NSNumber *)[note object];
     // printf("%s percent \r",[[n stringValue] cStringUsingEncoding:NSUTF8StringEncoding]);
 }
 

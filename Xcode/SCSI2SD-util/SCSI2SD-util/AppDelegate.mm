@@ -511,20 +511,25 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     NSString *filename = [[panel directory] stringByAppendingPathComponent: [[panel filename] lastPathComponent]];
     if([filename isEqualToString:@""] || filename == nil)
         return;
-    
-     NSString *outputString = @"";
-     filename = [filename stringByAppendingPathExtension:@"xml"];
-     outputString = [outputString stringByAppendingString: @"<SCSI2SD>\n"];
 
-     outputString = [outputString stringByAppendingString: [self->_settings toXml]];
-     DeviceController *dc = nil;
-     NSEnumerator *en = [self->deviceControllers objectEnumerator];
-     while((dc = [en nextObject]) != nil)
-     {
-         outputString = [outputString stringByAppendingString: [dc toXml]];
-     }
-     outputString = [outputString stringByAppendingString: @"</SCSI2SD>\n"];
-     [outputString writeToFile:filename atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+    NSString *outputString = @"";
+    filename = [filename stringByAppendingPathExtension:@"xml"];
+    outputString = [outputString stringByAppendingString: @"<SCSI2SD>\n"];
+    outputString = [outputString stringByAppendingString: [self->_settings toXml]];
+    
+    DeviceController *dc = nil;
+    NSEnumerator *en = [self->deviceControllers objectEnumerator];
+    while((dc = [en nextObject]) != nil)
+    {
+        outputString = [outputString stringByAppendingString: [dc toXml]];
+    }
+    outputString = [outputString stringByAppendingString: @"</SCSI2SD>\n"];
+    NSError *error = nil;
+    BOOL success = [outputString writeToFile:filename atomically:YES encoding:NSUTF8StringEncoding error:&error];
+    if (NO == success)
+    {
+        NSLog(@"Error writing file %@", error);
+    }
 }
 
 - (IBAction)saveFile:(id)sender
