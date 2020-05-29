@@ -89,7 +89,7 @@
 		14C54CAE244B9D9F0086316F /* hidpacket.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = hidpacket.c; path = ../../../../src/firmware/hidpacket.c; sourceTree = "<group>"; };
 		14C54CB1244BBC590086316F /* dfu-util */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "dfu-util"; sourceTree = "<group>"; };
 		14C63FE7244A339500848412 /* libusb-1.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libusb-1.0.0.dylib"; path = "../../../../src/scsi2sd-util6/libusb-1.0.23/libusb/libs/libusb-1.0.0.dylib"; sourceTree = "<group>"; };
-		14D96BCC23C935320008E7B3 /* scsi2sd-util-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "scsi2sd-util-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
+		14D96BCC23C935320008E7B3 /* scsi2sd-util-v6-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "scsi2sd-util-v6-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
 		14D96BCE23C935330008E7B3 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		14DEC5E6239F456800ECD04A /* Functions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Functions.mm; sourceTree = "<group>"; };
 		14DEC5E7239F456800ECD04A /* Functions.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Functions.hh; sourceTree = "<group>"; };
@@ -97,7 +97,7 @@
 		14DEC5EE23A4C76000ECD04A /* NSString+Extensions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extensions.m"; sourceTree = "<group>"; };
 		14F2F96323C94A4400169DD2 /* SCSI2SDTask.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SCSI2SDTask.hh; sourceTree = "<group>"; };
 		14F2F96423C94A4400169DD2 /* SCSI2SDTask.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SCSI2SDTask.mm; sourceTree = "<group>"; };
-		14F2F96E23CA2E8B00169DD2 /* scsi2sd-util-cli.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "scsi2sd-util-cli.entitlements"; sourceTree = "<group>"; };
+		14F2F96E23CA2E8B00169DD2 /* scsi2sd-util-v6-cli.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "scsi2sd-util-v6-cli.entitlements"; sourceTree = "<group>"; };
 		26451B5FE5FE6B8B9C117D01 /* libPods-SCSI2SD-util-v6.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SCSI2SD-util-v6.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		39658F20DC40CB44AAC9F0FB /* Pods-SCSI2SD-util-v6.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SCSI2SD-util-v6.debug.xcconfig"; path = "Target Support Files/Pods-SCSI2SD-util-v6/Pods-SCSI2SD-util-v6.debug.xcconfig"; sourceTree = "<group>"; };
 		792CF6FB662A5C9164598673 /* Pods-SCSI2SD-util-v6.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SCSI2SD-util-v6.release.xcconfig"; path = "Target Support Files/Pods-SCSI2SD-util-v6/Pods-SCSI2SD-util-v6.release.xcconfig"; sourceTree = "<group>"; };
@@ -218,7 +218,7 @@
 			isa = PBXGroup;
 			children = (
 				1482B1E623973F3E001BA513 /* SCSI2SD-util */,
-				14D96BCD23C935330008E7B3 /* scsi2sd-util-cli */,
+				14D96BCD23C935330008E7B3 /* scsi2sd-util-v6-cli */,
 				1482B1E523973F3E001BA513 /* Products */,
 				31BC21F99112F28CA817EF9E /* Pods */,
 				1474BFE223996564003C67D5 /* libs */,
@@ -230,7 +230,7 @@
 			isa = PBXGroup;
 			children = (
 				1482B1E423973F3E001BA513 /* SCSI2SD-util-v6.app */,
-				14D96BCC23C935320008E7B3 /* scsi2sd-util-cli */,
+				14D96BCC23C935320008E7B3 /* scsi2sd-util-v6-cli */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -273,15 +273,15 @@
 			path = Precompiled;
 			sourceTree = "<group>";
 		};
-		14D96BCD23C935330008E7B3 /* scsi2sd-util-cli */ = {
+		14D96BCD23C935330008E7B3 /* scsi2sd-util-v6-cli */ = {
 			isa = PBXGroup;
 			children = (
-				14F2F96E23CA2E8B00169DD2 /* scsi2sd-util-cli.entitlements */,
+				14F2F96E23CA2E8B00169DD2 /* scsi2sd-util-v6-cli.entitlements */,
 				14D96BCE23C935330008E7B3 /* main.mm */,
 				14F2F96323C94A4400169DD2 /* SCSI2SDTask.hh */,
 				14F2F96423C94A4400169DD2 /* SCSI2SDTask.mm */,
 			);
-			path = "scsi2sd-util-cli";
+			path = "scsi2sd-util-v6-cli";
 			sourceTree = "<group>";
 		};
 		14DEC5EC23A4C67A00ECD04A /* Categories */ = {
@@ -350,7 +350,7 @@
 			);
 			name = "scsi2sd-util-cli";
 			productName = "scsi2sd-util-cli";
-			productReference = 14D96BCC23C935320008E7B3 /* scsi2sd-util-cli */;
+			productReference = 14D96BCC23C935320008E7B3 /* scsi2sd-util-v6-cli */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -594,7 +594,7 @@
 			baseConfigurationReference = 39658F20DC40CB44AAC9F0FB /* Pods-SCSI2SD-util-v6.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "SCSI2SD-util/SCSI2SD_util.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "SCSI2SD-util/SCSI2SD-util-v6.entitlements";
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -639,7 +639,7 @@
 			baseConfigurationReference = 792CF6FB662A5C9164598673 /* Pods-SCSI2SD-util-v6.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "SCSI2SD-util/SCSI2SD_util.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "SCSI2SD-util/SCSI2SD-util-v6.entitlements";
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -695,6 +695,7 @@
 					"${PROJECT_DIR}/libs/include/libz",
 					"${PROJECT_DIR}/libs/include/scsi2sd-util",
 				);
+				INFOPLIST_FILE = "$(SRCROOT)/SCSI2SD-util/Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"${BUILD_DIR}/Debug/Base64",
@@ -711,7 +712,7 @@
 					"\"CoreFoundation\"",
 					"-l\"Base64\"",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "scsi2sd-util-v6-cli";
 			};
 			name = Debug;
 		};
@@ -731,6 +732,7 @@
 					"${PROJECT_DIR}/libs/include/libz",
 					"${PROJECT_DIR}/libs/include/scsi2sd-util",
 				);
+				INFOPLIST_FILE = "$(SRCROOT)/SCSI2SD-util/Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"${BUILD_DIR}Release/Base64",
@@ -747,7 +749,7 @@
 					"\"CoreFoundation\"",
 					"-l\"Base64\"",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "scsi2sd-util-v6-cli";
 			};
 			name = Release;
 		};
