@@ -680,7 +680,7 @@ ConfigUtil::fromXML(const std::string& filename)
 		{
 			targets.push_back(parseTarget(child));
 		}
-        else if ([[child name] isEqualToString: @"BoardConfig"])
+        else if ([[child name] isEqualToString: @"S2S_BoardCfg"])
 		{
 			boardConfig = parseBoardConfig(child);
 			boardConfigFound = 1;
