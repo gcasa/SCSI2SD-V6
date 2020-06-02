@@ -67,6 +67,10 @@ public:
 	bool ping();
 
 	bool readSCSIDebugInfo(std::vector<uint8_t>& buf);
+    
+    std::string getSerialNumber();
+    std::string getHardwareVersion();
+    bool isCorrectFirmware(const std::string& path);
 
 private:
 	HID(hid_device_info* hidInfo);

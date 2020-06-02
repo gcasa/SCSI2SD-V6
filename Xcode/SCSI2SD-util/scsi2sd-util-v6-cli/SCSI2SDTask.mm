@@ -424,6 +424,12 @@ out:
             if (!myHID) myHID.reset(SCSI2SD::HID::Open());
             if (myHID)
             {
+                if (!myHID->isCorrectFirmware(filename))
+                {
+                    [self logStringToPanel: @"Wrong filename!"];
+                    [self logStringToPanel: @"Firmware does not match device hardware!"];
+                    return;
+                }
                 [self logStringToPanel: @"Resetting SCSI2SD into bootloader"];
                 myHID->enterBootloader();
                 myHID.reset();

@@ -117,7 +117,8 @@
 /** @addtogroup Device_Included
   * @{
   */
-
+#define STM32F205xx 1
+ 
 #if defined(STM32F205xx)
   #include "stm32f205xx.h"
 #elif defined(STM32F215xx)
