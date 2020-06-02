@@ -25,6 +25,12 @@
 		145809462486021F00159CB8 /* stm32f2xx_hal_flash.c in Sources */ = {isa = PBXBuildFile; fileRef = 145809422486021E00159CB8 /* stm32f2xx_hal_flash.c */; };
 		145809482486025300159CB8 /* stm32f2xx_hal.c in Sources */ = {isa = PBXBuildFile; fileRef = 145809472486025300159CB8 /* stm32f2xx_hal.c */; };
 		145809492486025300159CB8 /* stm32f2xx_hal.c in Sources */ = {isa = PBXBuildFile; fileRef = 145809472486025300159CB8 /* stm32f2xx_hal.c */; };
+		145809802486F90C00159CB8 /* stm32f2xx_hal_flash_ex.c in Sources */ = {isa = PBXBuildFile; fileRef = 1458097F2486F90C00159CB8 /* stm32f2xx_hal_flash_ex.c */; };
+		145809822486F96600159CB8 /* stm32f2xx_hal_cortex.c in Sources */ = {isa = PBXBuildFile; fileRef = 145809812486F96600159CB8 /* stm32f2xx_hal_cortex.c */; };
+		145809842486FA1000159CB8 /* stm32f2xx_hal_rcc.c in Sources */ = {isa = PBXBuildFile; fileRef = 145809832486FA0F00159CB8 /* stm32f2xx_hal_rcc.c */; };
+		1458098824871D8700159CB8 /* time.c in Sources */ = {isa = PBXBuildFile; fileRef = 1458098724871D8700159CB8 /* time.c */; };
+		1458098A24871E1F00159CB8 /* system_stm32f2xx.c in Sources */ = {isa = PBXBuildFile; fileRef = 1458098924871E1F00159CB8 /* system_stm32f2xx.c */; };
+		1458098B24871E2600159CB8 /* system_stm32f2xx.c in Sources */ = {isa = PBXBuildFile; fileRef = 1458098924871E1F00159CB8 /* system_stm32f2xx.c */; };
 		146A539223BBEB800000A06B /* ConfigObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 146A539123BBEB800000A06B /* ConfigObject.mm */; };
 		1482B1E923973F3E001BA513 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1482B1E823973F3E001BA513 /* AppDelegate.mm */; };
 		1482B1EB23973F42001BA513 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1482B1EA23973F42001BA513 /* Assets.xcassets */; };
@@ -131,6 +137,12 @@
 		1458097C24862CA800159CB8 /* stm32f2xx_hal_crc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stm32f2xx_hal_crc.h; path = "../../../../../STM32CubeMX/SCSI2SD-V6/Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_hal_crc.h"; sourceTree = "<group>"; };
 		1458097D24862CA800159CB8 /* stm32f2xx_hal_nand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stm32f2xx_hal_nand.h; path = "../../../../../STM32CubeMX/SCSI2SD-V6/Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_hal_nand.h"; sourceTree = "<group>"; };
 		1458097E24862CA800159CB8 /* stm32f2xx_hal_uart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stm32f2xx_hal_uart.h; path = "../../../../../STM32CubeMX/SCSI2SD-V6/Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_hal_uart.h"; sourceTree = "<group>"; };
+		1458097F2486F90C00159CB8 /* stm32f2xx_hal_flash_ex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stm32f2xx_hal_flash_ex.c; path = "../../../../../STM32CubeMX/SCSI2SD-V6/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_flash_ex.c"; sourceTree = "<group>"; };
+		145809812486F96600159CB8 /* stm32f2xx_hal_cortex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stm32f2xx_hal_cortex.c; path = "../../../../../STM32CubeMX/SCSI2SD-V6/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_cortex.c"; sourceTree = "<group>"; };
+		145809832486FA0F00159CB8 /* stm32f2xx_hal_rcc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stm32f2xx_hal_rcc.c; path = "../../../../../STM32CubeMX/SCSI2SD-V6/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_rcc.c"; sourceTree = "<group>"; };
+		1458098624871D8600159CB8 /* time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = time.h; path = ../../../../../src/firmware/time.h; sourceTree = "<group>"; };
+		1458098724871D8700159CB8 /* time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = time.c; path = ../../../../../src/firmware/time.c; sourceTree = "<group>"; };
+		1458098924871E1F00159CB8 /* system_stm32f2xx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = system_stm32f2xx.c; path = "../../../../../STM32CubeMX/SCSI2SD-V6/Drivers/CMSIS/Device/ST/STM32F2xx/Source/Templates/system_stm32f2xx.c"; sourceTree = "<group>"; };
 		146A539023BBEB800000A06B /* ConfigObject.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ConfigObject.hh; sourceTree = "<group>"; };
 		146A539123BBEB800000A06B /* ConfigObject.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ConfigObject.mm; sourceTree = "<group>"; };
 		1474BFEB2399677E003C67D5 /* cybtldr_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cybtldr_api.h; sourceTree = "<group>"; };
@@ -204,6 +216,10 @@
 		1458094B24861CEF00159CB8 /* Driver */ = {
 			isa = PBXGroup;
 			children = (
+				1458098924871E1F00159CB8 /* system_stm32f2xx.c */,
+				145809832486FA0F00159CB8 /* stm32f2xx_hal_rcc.c */,
+				145809812486F96600159CB8 /* stm32f2xx_hal_cortex.c */,
+				1458097F2486F90C00159CB8 /* stm32f2xx_hal_flash_ex.c */,
 				1458096224862CA500159CB8 /* stm32f2xx_hal_adc_ex.h */,
 				1458096924862CA600159CB8 /* stm32f2xx_hal_adc.h */,
 				1458096824862CA600159CB8 /* stm32f2xx_hal_can.h */,
@@ -269,6 +285,15 @@
 				145809472486025300159CB8 /* stm32f2xx_hal.c */,
 			);
 			path = Driver;
+			sourceTree = "<group>";
+		};
+		1458098524871D6400159CB8 /* Firmware */ = {
+			isa = PBXGroup;
+			children = (
+				1458098724871D8700159CB8 /* time.c */,
+				1458098624871D8600159CB8 /* time.h */,
+			);
+			path = Firmware;
 			sourceTree = "<group>";
 		};
 		146A538F23BBEB5B0000A06B /* Classes */ = {
@@ -339,6 +364,7 @@
 		1474C0FB23998F0D003C67D5 /* CPPModules */ = {
 			isa = PBXGroup;
 			children = (
+				1458098524871D6400159CB8 /* Firmware */,
 				1458094B24861CEF00159CB8 /* Driver */,
 				141C5F7A2480D96B00CB8719 /* SCSI2SD_HID.hh */,
 				141C5F7B2480D96B00CB8719 /* SCSI2SD_HID.mm */,
@@ -582,9 +608,14 @@
 				141C5F782480D92200CB8719 /* ConfigUtil.mm in Sources */,
 				146A539223BBEB800000A06B /* ConfigObject.mm in Sources */,
 				1482B1F123973F42001BA513 /* main.m in Sources */,
+				1458098824871D8700159CB8 /* time.c in Sources */,
+				145809802486F90C00159CB8 /* stm32f2xx_hal_flash_ex.c in Sources */,
 				14DEC5E8239F456800ECD04A /* Functions.mm in Sources */,
+				145809842486FA1000159CB8 /* stm32f2xx_hal_rcc.c in Sources */,
 				145809432486021F00159CB8 /* stm32f2xx_hal_gpio.c in Sources */,
 				1482B210239748DB001BA513 /* SettingsController.mm in Sources */,
+				1458098A24871E1F00159CB8 /* system_stm32f2xx.c in Sources */,
+				145809822486F96600159CB8 /* stm32f2xx_hal_cortex.c in Sources */,
 				14C54CAF244B9D9F0086316F /* hidpacket.c in Sources */,
 				1482B1E923973F3E001BA513 /* AppDelegate.mm in Sources */,
 				145809452486021F00159CB8 /* stm32f2xx_hal_flash.c in Sources */,
@@ -605,6 +636,7 @@
 				145809492486025300159CB8 /* stm32f2xx_hal.c in Sources */,
 				14F2F96D23CA23FA00169DD2 /* ConfigObject.mm in Sources */,
 				141C5F71247F11A500CB8719 /* hidpacket.c in Sources */,
+				1458098B24871E2600159CB8 /* system_stm32f2xx.c in Sources */,
 				14F2F96B23CA23F000169DD2 /* Functions.mm in Sources */,
 				141C5F72247F11A900CB8719 /* Dfu.cc in Sources */,
 				14D96BCF23C935330008E7B3 /* main.mm in Sources */,

@@ -470,7 +470,7 @@ __attribute__((always_inline)) __STATIC_INLINE void __ISB(void)
  */
 __attribute__((always_inline)) __STATIC_INLINE void __DSB(void)
 {
-  __ASM volatile ("dsb 0xF":::"memory");
+  // __ASM volatile ("dsb 0xF":::"memory");
 }
 
 
