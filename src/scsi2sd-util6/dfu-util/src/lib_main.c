@@ -29,7 +29,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <getopt.h>
-#include <libusb.h>
+#include "libusb.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
@@ -187,7 +187,8 @@ static void help(void)
 		"\t\t\t\traw file download or upload. Not applicable for\n"
 		"\t\t\t\tDfuSe file (.dfu) downloads\n"
 		);
-	exit(EX_USAGE);
+	// exit(EX_USAGE);
+	// return EX_USAGE;
 }
 
 static void print_version(void)
@@ -331,7 +332,8 @@ int dfu_util(int argc, char **argv)
 
 	print_version();
 	if (mode == MODE_VERSION) {
-		exit(0);
+		// exit(0);
+		return 0;
 	}
 
 	if (mode == MODE_NONE) {
@@ -374,7 +376,8 @@ int dfu_util(int argc, char **argv)
 
 	if (mode == MODE_LIST) {
 		list_dfu_interfaces();
-		exit(0);
+		// exit(0);
+		return 0;
 	}
 
 	if (dfu_root == NULL) {
@@ -485,7 +488,7 @@ int dfu_util(int argc, char **argv)
 
 		if (mode == MODE_DETACH) {
 			libusb_exit(ctx);
-			exit(0);
+			return 0;
 		}
 
 		/* keeping handles open might prevent re-enumeration */

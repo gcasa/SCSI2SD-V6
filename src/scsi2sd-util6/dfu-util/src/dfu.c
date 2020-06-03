@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <libusb.h>
+#include "libusb.h"
 
 #include "portable.h"
 #include "dfu.h"

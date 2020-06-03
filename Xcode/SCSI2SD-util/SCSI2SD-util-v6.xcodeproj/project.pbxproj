@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		141C5F6F247E261F00CB8719 /* libdfu-util.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 144F109E245DC47B00655924 /* libdfu-util.a */; };
 		141C5F70247EC92600CB8719 /* libusb-1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14B79B0D244A315E00C3FC92 /* libusb-1.0.a */; };
 		141C5F71247F11A500CB8719 /* hidpacket.c in Sources */ = {isa = PBXBuildFile; fileRef = 14C54CAE244B9D9F0086316F /* hidpacket.c */; };
 		141C5F72247F11A900CB8719 /* Dfu.cc in Sources */ = {isa = PBXBuildFile; fileRef = 14AF8336243A1B220046D0DF /* Dfu.cc */; };
@@ -16,7 +15,6 @@
 		141C5F792480D92E00CB8719 /* ConfigUtil.mm in Sources */ = {isa = PBXBuildFile; fileRef = 141C5F772480D92200CB8719 /* ConfigUtil.mm */; };
 		141C5F7C2480D96C00CB8719 /* SCSI2SD_HID.mm in Sources */ = {isa = PBXBuildFile; fileRef = 141C5F7B2480D96B00CB8719 /* SCSI2SD_HID.mm */; };
 		141C5F7D2480D97B00CB8719 /* SCSI2SD_HID.mm in Sources */ = {isa = PBXBuildFile; fileRef = 141C5F7B2480D96B00CB8719 /* SCSI2SD_HID.mm */; };
-		144F109F245DC47C00655924 /* libdfu-util.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 144F109E245DC47B00655924 /* libdfu-util.a */; };
 		1458093524834B8A00159CB8 /* hwversion.c in Sources */ = {isa = PBXBuildFile; fileRef = 1458093424834B8A00159CB8 /* hwversion.c */; };
 		1458093624834B8A00159CB8 /* hwversion.c in Sources */ = {isa = PBXBuildFile; fileRef = 1458093424834B8A00159CB8 /* hwversion.c */; };
 		145809432486021F00159CB8 /* stm32f2xx_hal_gpio.c in Sources */ = {isa = PBXBuildFile; fileRef = 145809412486021E00159CB8 /* stm32f2xx_hal_gpio.c */; };
@@ -31,6 +29,22 @@
 		1458098824871D8700159CB8 /* time.c in Sources */ = {isa = PBXBuildFile; fileRef = 1458098724871D8700159CB8 /* time.c */; };
 		1458098A24871E1F00159CB8 /* system_stm32f2xx.c in Sources */ = {isa = PBXBuildFile; fileRef = 1458098924871E1F00159CB8 /* system_stm32f2xx.c */; };
 		1458098B24871E2600159CB8 /* system_stm32f2xx.c in Sources */ = {isa = PBXBuildFile; fileRef = 1458098924871E1F00159CB8 /* system_stm32f2xx.c */; };
+		14580A7A248845CA00159CB8 /* dfu_file.c in Sources */ = {isa = PBXBuildFile; fileRef = 14580A69248845C900159CB8 /* dfu_file.c */; };
+		14580A7B248845CA00159CB8 /* quirks.c in Sources */ = {isa = PBXBuildFile; fileRef = 14580A6F248845C900159CB8 /* quirks.c */; };
+		14580A7C248845CA00159CB8 /* dfu_util.c in Sources */ = {isa = PBXBuildFile; fileRef = 14580A71248845C900159CB8 /* dfu_util.c */; };
+		14580A7D248845CA00159CB8 /* dfu.c in Sources */ = {isa = PBXBuildFile; fileRef = 14580A73248845CA00159CB8 /* dfu.c */; };
+		14580A7E248845CA00159CB8 /* dfuse_mem.c in Sources */ = {isa = PBXBuildFile; fileRef = 14580A74248845CA00159CB8 /* dfuse_mem.c */; };
+		14580A7F248845CA00159CB8 /* dfuse.c in Sources */ = {isa = PBXBuildFile; fileRef = 14580A75248845CA00159CB8 /* dfuse.c */; };
+		14580A80248845CA00159CB8 /* lib_main.c in Sources */ = {isa = PBXBuildFile; fileRef = 14580A76248845CA00159CB8 /* lib_main.c */; };
+		14580A83248845CA00159CB8 /* dfu_load.c in Sources */ = {isa = PBXBuildFile; fileRef = 14580A79248845CA00159CB8 /* dfu_load.c */; };
+		14580A84248845F900159CB8 /* dfu_file.c in Sources */ = {isa = PBXBuildFile; fileRef = 14580A69248845C900159CB8 /* dfu_file.c */; };
+		14580A85248845FC00159CB8 /* dfu_load.c in Sources */ = {isa = PBXBuildFile; fileRef = 14580A79248845CA00159CB8 /* dfu_load.c */; };
+		14580A862488460000159CB8 /* dfu_util.c in Sources */ = {isa = PBXBuildFile; fileRef = 14580A71248845C900159CB8 /* dfu_util.c */; };
+		14580A872488460500159CB8 /* dfu.c in Sources */ = {isa = PBXBuildFile; fileRef = 14580A73248845CA00159CB8 /* dfu.c */; };
+		14580A882488460900159CB8 /* dfuse_mem.c in Sources */ = {isa = PBXBuildFile; fileRef = 14580A74248845CA00159CB8 /* dfuse_mem.c */; };
+		14580A892488460C00159CB8 /* dfuse.c in Sources */ = {isa = PBXBuildFile; fileRef = 14580A75248845CA00159CB8 /* dfuse.c */; };
+		14580A8A2488461000159CB8 /* lib_main.c in Sources */ = {isa = PBXBuildFile; fileRef = 14580A76248845CA00159CB8 /* lib_main.c */; };
+		14580A8C2488461C00159CB8 /* quirks.c in Sources */ = {isa = PBXBuildFile; fileRef = 14580A6F248845C900159CB8 /* quirks.c */; };
 		146A539223BBEB800000A06B /* ConfigObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 146A539123BBEB800000A06B /* ConfigObject.mm */; };
 		1482B1E923973F3E001BA513 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1482B1E823973F3E001BA513 /* AppDelegate.mm */; };
 		1482B1EB23973F42001BA513 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1482B1EA23973F42001BA513 /* Assets.xcassets */; };
@@ -72,7 +86,6 @@
 		141C5F7A2480D96B00CB8719 /* SCSI2SD_HID.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SCSI2SD_HID.hh; sourceTree = "<group>"; };
 		141C5F7B2480D96B00CB8719 /* SCSI2SD_HID.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SCSI2SD_HID.mm; sourceTree = "<group>"; };
 		14418B4623AAC77000C8EB09 /* hidpacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = hidpacket.h; path = ../../../../include/hidpacket.h; sourceTree = "<group>"; };
-		144F109E245DC47B00655924 /* libdfu-util.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libdfu-util.a"; path = "../../../../src/scsi2sd-util6/dfu-util/libdfu-util.a"; sourceTree = "<group>"; };
 		1458093424834B8A00159CB8 /* hwversion.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = hwversion.c; path = ../../../../src/firmware/hwversion.c; sourceTree = "<group>"; };
 		1458093924844F9300159CB8 /* stm32f2xx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stm32f2xx.h; sourceTree = "<group>"; };
 		1458093A24849D6E00159CB8 /* core_cm3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = core_cm3.h; sourceTree = "<group>"; };
@@ -143,6 +156,24 @@
 		1458098624871D8600159CB8 /* time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = time.h; path = ../../../../../src/firmware/time.h; sourceTree = "<group>"; };
 		1458098724871D8700159CB8 /* time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = time.c; path = ../../../../../src/firmware/time.c; sourceTree = "<group>"; };
 		1458098924871E1F00159CB8 /* system_stm32f2xx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = system_stm32f2xx.c; path = "../../../../../STM32CubeMX/SCSI2SD-V6/Drivers/CMSIS/Device/ST/STM32F2xx/Source/Templates/system_stm32f2xx.c"; sourceTree = "<group>"; };
+		14580A67248845C900159CB8 /* dfu_file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dfu_file.h; path = "../../../../../src/scsi2sd-util6/dfu-util/src/dfu_file.h"; sourceTree = "<group>"; };
+		14580A68248845C900159CB8 /* dfu_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dfu_util.h; path = "../../../../../src/scsi2sd-util6/dfu-util/src/dfu_util.h"; sourceTree = "<group>"; };
+		14580A69248845C900159CB8 /* dfu_file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dfu_file.c; path = "../../../../../src/scsi2sd-util6/dfu-util/src/dfu_file.c"; sourceTree = "<group>"; };
+		14580A6A248845C900159CB8 /* dfu_load.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dfu_load.h; path = "../../../../../src/scsi2sd-util6/dfu-util/src/dfu_load.h"; sourceTree = "<group>"; };
+		14580A6B248845C900159CB8 /* usb_dfu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = usb_dfu.h; path = "../../../../../src/scsi2sd-util6/dfu-util/src/usb_dfu.h"; sourceTree = "<group>"; };
+		14580A6C248845C900159CB8 /* quirks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = quirks.h; path = "../../../../../src/scsi2sd-util6/dfu-util/src/quirks.h"; sourceTree = "<group>"; };
+		14580A6D248845C900159CB8 /* portable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = portable.h; path = "../../../../../src/scsi2sd-util6/dfu-util/src/portable.h"; sourceTree = "<group>"; };
+		14580A6E248845C900159CB8 /* dfu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dfu.h; path = "../../../../../src/scsi2sd-util6/dfu-util/src/dfu.h"; sourceTree = "<group>"; };
+		14580A6F248845C900159CB8 /* quirks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = quirks.c; path = "../../../../../src/scsi2sd-util6/dfu-util/src/quirks.c"; sourceTree = "<group>"; };
+		14580A70248845C900159CB8 /* dfuse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dfuse.h; path = "../../../../../src/scsi2sd-util6/dfu-util/src/dfuse.h"; sourceTree = "<group>"; };
+		14580A71248845C900159CB8 /* dfu_util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dfu_util.c; path = "../../../../../src/scsi2sd-util6/dfu-util/src/dfu_util.c"; sourceTree = "<group>"; };
+		14580A72248845CA00159CB8 /* dfuse_mem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dfuse_mem.h; path = "../../../../../src/scsi2sd-util6/dfu-util/src/dfuse_mem.h"; sourceTree = "<group>"; };
+		14580A73248845CA00159CB8 /* dfu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dfu.c; path = "../../../../../src/scsi2sd-util6/dfu-util/src/dfu.c"; sourceTree = "<group>"; };
+		14580A74248845CA00159CB8 /* dfuse_mem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dfuse_mem.c; path = "../../../../../src/scsi2sd-util6/dfu-util/src/dfuse_mem.c"; sourceTree = "<group>"; };
+		14580A75248845CA00159CB8 /* dfuse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dfuse.c; path = "../../../../../src/scsi2sd-util6/dfu-util/src/dfuse.c"; sourceTree = "<group>"; };
+		14580A76248845CA00159CB8 /* lib_main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lib_main.c; path = "../../../../../src/scsi2sd-util6/dfu-util/src/lib_main.c"; sourceTree = "<group>"; };
+		14580A79248845CA00159CB8 /* dfu_load.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dfu_load.c; path = "../../../../../src/scsi2sd-util6/dfu-util/src/dfu_load.c"; sourceTree = "<group>"; };
+		14580A8E248859C400159CB8 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = config.h; path = "../../../../../src/scsi2sd-util6/dfu-util/config.h"; sourceTree = "<group>"; };
 		146A539023BBEB800000A06B /* ConfigObject.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ConfigObject.hh; sourceTree = "<group>"; };
 		146A539123BBEB800000A06B /* ConfigObject.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ConfigObject.mm; sourceTree = "<group>"; };
 		1474BFEB2399677E003C67D5 /* cybtldr_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cybtldr_api.h; sourceTree = "<group>"; };
@@ -195,7 +226,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				144F109F245DC47C00655924 /* libdfu-util.a in Frameworks */,
 				14C54CAB244A341B0086316F /* libusb-1.0.a in Frameworks */,
 				DD7DCB0BEFAC1D7A075B511E /* libPods-SCSI2SD-util-v6.a in Frameworks */,
 			);
@@ -205,7 +235,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				141C5F6F247E261F00CB8719 /* libdfu-util.a in Frameworks */,
 				141C5F70247EC92600CB8719 /* libusb-1.0.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -296,6 +325,31 @@
 			path = Firmware;
 			sourceTree = "<group>";
 		};
+		14580A662488455200159CB8 /* DFU */ = {
+			isa = PBXGroup;
+			children = (
+				14580A8E248859C400159CB8 /* config.h */,
+				14580A69248845C900159CB8 /* dfu_file.c */,
+				14580A67248845C900159CB8 /* dfu_file.h */,
+				14580A79248845CA00159CB8 /* dfu_load.c */,
+				14580A6A248845C900159CB8 /* dfu_load.h */,
+				14580A71248845C900159CB8 /* dfu_util.c */,
+				14580A68248845C900159CB8 /* dfu_util.h */,
+				14580A73248845CA00159CB8 /* dfu.c */,
+				14580A6E248845C900159CB8 /* dfu.h */,
+				14580A74248845CA00159CB8 /* dfuse_mem.c */,
+				14580A72248845CA00159CB8 /* dfuse_mem.h */,
+				14580A75248845CA00159CB8 /* dfuse.c */,
+				14580A70248845C900159CB8 /* dfuse.h */,
+				14580A76248845CA00159CB8 /* lib_main.c */,
+				14580A6D248845C900159CB8 /* portable.h */,
+				14580A6F248845C900159CB8 /* quirks.c */,
+				14580A6C248845C900159CB8 /* quirks.h */,
+				14580A6B248845C900159CB8 /* usb_dfu.h */,
+			);
+			path = DFU;
+			sourceTree = "<group>";
+		};
 		146A538F23BBEB5B0000A06B /* Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -355,7 +409,6 @@
 		1474C0952399677F003C67D5 /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				144F109E245DC47B00655924 /* libdfu-util.a */,
 				14C63FE7244A339500848412 /* libusb-1.0.0.dylib */,
 			);
 			path = lib;
@@ -364,6 +417,7 @@
 		1474C0FB23998F0D003C67D5 /* CPPModules */ = {
 			isa = PBXGroup;
 			children = (
+				14580A662488455200159CB8 /* DFU */,
 				1458098524871D6400159CB8 /* Firmware */,
 				1458094B24861CEF00159CB8 /* Driver */,
 				141C5F7A2480D96B00CB8719 /* SCSI2SD_HID.hh */,
@@ -608,17 +662,25 @@
 				141C5F782480D92200CB8719 /* ConfigUtil.mm in Sources */,
 				146A539223BBEB800000A06B /* ConfigObject.mm in Sources */,
 				1482B1F123973F42001BA513 /* main.m in Sources */,
+				14580A83248845CA00159CB8 /* dfu_load.c in Sources */,
 				1458098824871D8700159CB8 /* time.c in Sources */,
 				145809802486F90C00159CB8 /* stm32f2xx_hal_flash_ex.c in Sources */,
 				14DEC5E8239F456800ECD04A /* Functions.mm in Sources */,
+				14580A7E248845CA00159CB8 /* dfuse_mem.c in Sources */,
 				145809842486FA1000159CB8 /* stm32f2xx_hal_rcc.c in Sources */,
 				145809432486021F00159CB8 /* stm32f2xx_hal_gpio.c in Sources */,
 				1482B210239748DB001BA513 /* SettingsController.mm in Sources */,
 				1458098A24871E1F00159CB8 /* system_stm32f2xx.c in Sources */,
+				14580A80248845CA00159CB8 /* lib_main.c in Sources */,
 				145809822486F96600159CB8 /* stm32f2xx_hal_cortex.c in Sources */,
+				14580A7B248845CA00159CB8 /* quirks.c in Sources */,
 				14C54CAF244B9D9F0086316F /* hidpacket.c in Sources */,
+				14580A7F248845CA00159CB8 /* dfuse.c in Sources */,
+				14580A7D248845CA00159CB8 /* dfu.c in Sources */,
+				14580A7A248845CA00159CB8 /* dfu_file.c in Sources */,
 				1482B1E923973F3E001BA513 /* AppDelegate.mm in Sources */,
 				145809452486021F00159CB8 /* stm32f2xx_hal_flash.c in Sources */,
+				14580A7C248845CA00159CB8 /* dfu_util.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -626,7 +688,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14580A8C2488461C00159CB8 /* quirks.c in Sources */,
 				14F2F96C23CA23F700169DD2 /* NSString+Extensions.m in Sources */,
+				14580A882488460900159CB8 /* dfuse_mem.c in Sources */,
 				1458093624834B8A00159CB8 /* hwversion.c in Sources */,
 				145809462486021F00159CB8 /* stm32f2xx_hal_flash.c in Sources */,
 				14F2F96523C94A4400169DD2 /* SCSI2SDTask.mm in Sources */,
@@ -635,12 +699,18 @@
 				141C5F7D2480D97B00CB8719 /* SCSI2SD_HID.mm in Sources */,
 				145809492486025300159CB8 /* stm32f2xx_hal.c in Sources */,
 				14F2F96D23CA23FA00169DD2 /* ConfigObject.mm in Sources */,
+				14580A84248845F900159CB8 /* dfu_file.c in Sources */,
 				141C5F71247F11A500CB8719 /* hidpacket.c in Sources */,
 				1458098B24871E2600159CB8 /* system_stm32f2xx.c in Sources */,
 				14F2F96B23CA23F000169DD2 /* Functions.mm in Sources */,
+				14580A8A2488461000159CB8 /* lib_main.c in Sources */,
 				141C5F72247F11A900CB8719 /* Dfu.cc in Sources */,
+				14580A892488460C00159CB8 /* dfuse.c in Sources */,
 				14D96BCF23C935330008E7B3 /* main.mm in Sources */,
+				14580A85248845FC00159CB8 /* dfu_load.c in Sources */,
 				141C5F792480D92E00CB8719 /* ConfigUtil.mm in Sources */,
+				14580A862488460000159CB8 /* dfu_util.c in Sources */,
+				14580A872488460500159CB8 /* dfu.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

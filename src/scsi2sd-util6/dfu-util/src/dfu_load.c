@@ -31,7 +31,7 @@
 #include <errno.h>
 #include <string.h>
 
-#include <libusb.h>
+#include "libusb.h"
 
 #include "portable.h"
 #include "dfu.h"
