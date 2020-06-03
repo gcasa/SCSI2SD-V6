@@ -791,88 +791,49 @@ out:
 
 - (BOOL) checkVersionMarker: (NSString *)firmware
 {
-    BOOL result = NO;
-    /*
-+    std::stringstream ss;
-+
-+    if (wxExecute("which dfu-util", wxEXEC_SYNC) == 0)
-+    {
-+                       ss << "dfu-util ";
-+               } else {
-+                       wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
-+                       ss << '"' << exePath.GetPathWithSep() << "dfu-util\" ";
-+               }
-+#endif
-+
-+               std::string tmpFile =
-+                       wxFileName::CreateTempFileName(
-+                               _("SCSI2SD_MARKER"), static_cast<wxFile*>(NULL));
-+               wxRemoveFile(tmpFile); // dfu-util won't overwrite.
-+
-+               ss << "--alt 2 -s 0x1FFF7800:4 -U \"" << tmpFile << "\"";
-+
-+               wxLogMessage("Running: %s", ss.str());
-+
-+               std::string cmd = ss.str();
-+               long result = wxExecute(
-+                       cmd.c_str(),
-+                       wxEXEC_SYNC
-+                       );
-+               if (result != 0)
-+               {
-+                       wxLogMessage("OTP Version check failed.");
-+                       return false;
-+               }
-+
-+               // Ok, we now have a file with 8 bytes in it.
-+               wxFile file(tmpFile);
-+               if (file.Length() != 4)
-+               {
-+                       wxLogMessage("OTP Version check file isn't 4 bytes.");
-+                       return false;
-+               }
-+
-+               uint8_t data[4];
-+               if (file.Read(data, sizeof(data)) != sizeof(data))
-+               {
-+                       wxMessageBox(
-+                               "Couldn't read file",
-+                               "Couldn't read file",
-+                               wxOK | wxICON_ERROR);
-+                       return false;
-+               }
-+               wxRemoveFile(tmpFile);
-+
-+               uint32_t value =
-+                       (((uint32_t)(data[0]))) |
-+                       (((uint32_t)(data[1])) << 8) |
-+                       (((uint32_t)(data[2])) << 16) |
-+                       (((uint32_t)(data[3])) << 24);
-+               if (value == 0xFFFFFFFF)
-+               {
-+                       // Not set, ignore.
-+                       wxLogMessage("OTP Hardware version not set. Ignoring.");
-+                       return true;
-+               }
-+               else if (value == 0x06002020)
-+               {
-+                       wxLogMessage("Found V6 2020 hardware marker");
-+                       return firmware.rfind("firmware.V6.2020.dfu") != std::string::npos;
-+               }
-+               else if (value == 0x06002019)
-+               {
-+                       wxLogMessage("Found V6 revF hardware marker");
-+                       return firmware.rfind("firmware.V6.revF.dfu") != std::string::npos ||
-+                               firmware.rfind("firmware.dfu") != std::string::npos;
-+               }
-+               else
-+               {
-+                       wxLogMessage("Found unknown hardware marker: %u", value);
-+                       return false; // Some unknown version.
-+               }
-+       }
-*/
-    return result;
+    NSString *tmpFile = [NSHomeDirectory() stringByAppendingPathComponent: [NSString stringWithFormat: @"SCSI_MARKER-%f",
+                                                                                 [[NSDate date] timeIntervalSince1970]]];
+    NSString *cmdString = [NSString stringWithFormat: @"dfu-util --alt 2 -s 0x1FFF7800:4 -U \"%@\"", tmpFile];
+    NSArray *commandArray = [cmdString componentsSeparatedByString: @" "];
+    char **array = convertNSArrayToCArray(commandArray);
+    int count = (int)[commandArray count];
+    dfu_util(count, array);
+    
+    NSData *fileData = [NSData dataWithContentsOfFile:tmpFile];
+    if (fileData != nil)
+    {
+        const uint8_t *data = (const uint8_t *)[fileData bytes];
+        uint32_t value =
+            (((uint32_t)(data[0]))) |
+            (((uint32_t)(data[1])) << 8) |
+            (((uint32_t)(data[2])) << 16) |
+            (((uint32_t)(data[3])) << 24);
+        
+        if (value == 0xFFFFFFFF)
+        {
+            // Not set, ignore.
+            [self logStringToDFUPanel: @"OTP Hardware version not set. Ignoring."];
+            return YES;
+        }
+        else if (value == 0x06002020)
+        {
+            [self logStringToDFUPanel: @"Found V6 2020 hardware marker"];
+            return YES; //return firmware.rfind("firmware.V6.2020.dfu") != std::string::npos;
+        }
+        else if (value == 0x06002019)
+        {
+            [self logStringToDFUPanel: @"Found V6 revF hardware marker"];
+            // return firmware.rfind("firmware.V6.revF.dfu") != std::string::npos ||
+            //    firmware.rfind("firmware.dfu") != std::string::npos;
+            return YES;
+        }
+        else
+        {
+            [self logStringToDFUPanel: @"Found unknown hardware marker: %u", value];
+            return NO; // Some unknown version.
+        }
+    }
+    return NO;
 }
 
 // Upgrade firmware...
@@ -911,7 +872,8 @@ out:
                     [alert runModal];
                     return;
                 }
-                versionChecked = true;
+                // versionChecked = true;
+                versionChecked = false; // for testing...
                 [self logStringToPanel: @"Resetting SCSI2SD into bootloader"];
                 myHID->enterBootloader();
                 myHID.reset();
@@ -919,7 +881,19 @@ out:
 
             if (myDfu.hasDevice() && !versionChecked)
             {
-                
+                [self logStringToPanel:@"STM DFU Bootloader found, checking compatibility"];
+                // [self updateProgress:[NSNumber numberWithFloat:0.0]];
+                if (![self checkVersionMarker: filename])
+                {
+                    NSAlert *alert = [[NSAlert alloc] init];
+
+                    [self hideProgress:self];
+                    alert.messageText = @"Wrong filename";
+                    alert.informativeText = @"Firmware does not match device hardware";
+                    [alert runModal];
+                    return;
+                }
+                versionChecked = true;
             }
             
             if (myDfu.hasDevice())

@@ -641,11 +641,17 @@ status_again:
 		if (dfuse_device || dfuse_options) {
 		    if (dfuse_do_upload(dfu_root, transfer_size, fd,
 					dfuse_options) < 0)
-			exit(1);
+		    {
+		    	dfu_printf("Could not perform upload from device");
+				// exit(1);
+				return 0;		    	
+		    }
 		} else {
 		    if (dfuload_do_upload(dfu_root, transfer_size,
 			expected_size, fd) < 0) {
-			exit(1);
+		    	dfu_printf("Could not perform upload from device");
+				// exit(1);
+				return 0;		    	
 		    }
 		}
 		close(fd);
