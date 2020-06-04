@@ -797,7 +797,8 @@ out:
     NSArray *commandArray = [cmdString componentsSeparatedByString: @" "];
     char **array = convertNSArrayToCArray(commandArray);
     int count = (int)[commandArray count];
-    dfu_util(count, array);
+    if (dfu_util(count, array) == 0)
+        return NO;
     
     NSData *fileData = [NSData dataWithContentsOfFile:tmpFile];
     if (fileData != nil)
@@ -872,8 +873,8 @@ out:
                     [alert runModal];
                     return;
                 }
-                // versionChecked = true;
-                versionChecked = false; // for testing...
+                versionChecked = true;
+                // versionChecked = false; // for testing...
                 [self logStringToPanel: @"Resetting SCSI2SD into bootloader"];
                 myHID->enterBootloader();
                 myHID.reset();

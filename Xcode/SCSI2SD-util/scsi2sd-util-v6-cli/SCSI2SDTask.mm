@@ -410,6 +410,121 @@ out:
     return;
 }
 
+- (BOOL) checkVersionMarker: (NSString *)firmware
+{
+    NSString *tmpFile = [NSHomeDirectory() stringByAppendingPathComponent: [NSString stringWithFormat: @"SCSI_MARKER-%f",
+                                                                                 [[NSDate date] timeIntervalSince1970]]];
+    NSString *cmdString = [NSString stringWithFormat: @"dfu-util --alt 2 -s 0x1FFF7800:4 -U \"%@\"", tmpFile];
+    NSArray *commandArray = [cmdString componentsSeparatedByString: @" "];
+    char **array = convertNSArrayToCArray(commandArray);
+    int count = (int)[commandArray count];
+    if (dfu_util(count, array) == 0)
+        return NO;
+    
+    NSData *fileData = [NSData dataWithContentsOfFile:tmpFile];
+    if (fileData != nil)
+    {
+        const uint8_t *data = (const uint8_t *)[fileData bytes];
+        uint32_t value =
+            (((uint32_t)(data[0]))) |
+            (((uint32_t)(data[1])) << 8) |
+            (((uint32_t)(data[2])) << 16) |
+            (((uint32_t)(data[3])) << 24);
+        
+        if (value == 0xFFFFFFFF)
+        {
+            // Not set, ignore.
+            [self logStringToPanel: @"OTP Hardware version not set. Ignoring."];
+            return YES;
+        }
+        else if (value == 0x06002020)
+        {
+            [self logStringToPanel: @"Found V6 2020 hardware marker"];
+            return YES; //return firmware.rfind("firmware.V6.2020.dfu") != std::string::npos;
+        }
+        else if (value == 0x06002019)
+        {
+            [self logStringToPanel: @"Found V6 revF hardware marker"];
+            // return firmware.rfind("firmware.V6.revF.dfu") != std::string::npos ||
+            //    firmware.rfind("firmware.dfu") != std::string::npos;
+            return YES;
+        }
+        else
+        {
+            [self logStringToPanel: @"Found unknown hardware marker: %u", value];
+            return NO; // Some unknown version.
+        }
+    }
+    return NO;
+}
+
+// Upgrade firmware...
+- (void) upgradeFirmwareDeviceFromFilename: (NSString *)filename
+{
+    if ([[filename pathExtension] isEqualToString: @"dfu"] == NO)
+    {
+        [self logStringToPanel: @"SCSI2SD-V6 requires .dfu extension"];
+    }
+    
+    BOOL versionChecked = NO;
+    while (true)
+    {
+        try
+        {
+            if (!myHID) myHID.reset(SCSI2SD::HID::Open());
+            if (myHID)
+            {
+                std::string fn = std::string([filename cStringUsingEncoding:NSUTF8StringEncoding]);
+                if (!myHID->isCorrectFirmware(fn))
+                {
+                    [self logStringToPanel: @"Wrong filename!"];
+                    [self logStringToPanel: @"Firmware does not match device hardware!"];
+                    return;
+                }
+                versionChecked = true;
+                // versionChecked = false; // for testing...
+                [self logStringToPanel: @"Resetting SCSI2SD into bootloader"];
+                myHID->enterBootloader();
+                myHID.reset();
+            }
+
+            if (myDfu.hasDevice() && !versionChecked)
+            {
+                [self logStringToPanel:@"STM DFU Bootloader found, checking compatibility"];
+                // [self updateProgress:[NSNumber numberWithFloat:0.0]];
+                if (![self checkVersionMarker: filename])
+                {
+                    [self logStringToPanel: @"Wrong filename!"];
+                    [self logStringToPanel: @"Firmware does not match device hardware!"];
+                    return;
+                }
+                versionChecked = true;
+            }
+            
+            if (myDfu.hasDevice())
+            {
+                [self logStringToPanel: @"\n\nSTM DFU Bootloader found\n"];
+                NSString *dfuPath = [[NSBundle mainBundle] pathForResource:@"dfu-util" ofType:@""];
+                NSString *commandString = [NSString stringWithFormat:@"%@ -D %@ -a 0 -R", [dfuPath lastPathComponent], filename];
+                NSArray *commandArray = [commandString componentsSeparatedByString: @" "];
+                char **array = convertNSArrayToCArray(commandArray);
+                int count = (int)[commandArray count];
+                dfu_util(count, array);
+                [self performSelectorOnMainThread:@selector(reset_hid)
+                                       withObject:nil
+                                    waitUntilDone:YES];
+                break;
+            }
+        }
+        catch (std::exception& e)
+        {
+            [self logStringToPanel: @"%s",e.what()];
+            myHID.reset();
+        }
+    }
+}
+
+/*
 - (void) upgradeFirmwareDeviceFromFilename: (NSString *)filename
 {
     if ([[filename pathExtension] isEqualToString: @"dfu"] == NO)
@@ -456,6 +571,6 @@ out:
             myHID.reset();
         }
     }
-}
+} */
 
 @end

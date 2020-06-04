@@ -45,6 +45,10 @@
 		14580A892488460C00159CB8 /* dfuse.c in Sources */ = {isa = PBXBuildFile; fileRef = 14580A75248845CA00159CB8 /* dfuse.c */; };
 		14580A8A2488461000159CB8 /* lib_main.c in Sources */ = {isa = PBXBuildFile; fileRef = 14580A76248845CA00159CB8 /* lib_main.c */; };
 		14580A8C2488461C00159CB8 /* quirks.c in Sources */ = {isa = PBXBuildFile; fileRef = 14580A6F248845C900159CB8 /* quirks.c */; };
+		14580A8F248886F100159CB8 /* stm32f2xx_hal_rcc.c in Sources */ = {isa = PBXBuildFile; fileRef = 145809832486FA0F00159CB8 /* stm32f2xx_hal_rcc.c */; };
+		14580A90248886F500159CB8 /* stm32f2xx_hal_cortex.c in Sources */ = {isa = PBXBuildFile; fileRef = 145809812486F96600159CB8 /* stm32f2xx_hal_cortex.c */; };
+		14580A91248886F900159CB8 /* stm32f2xx_hal_flash_ex.c in Sources */ = {isa = PBXBuildFile; fileRef = 1458097F2486F90C00159CB8 /* stm32f2xx_hal_flash_ex.c */; };
+		14580A92248887BB00159CB8 /* time.c in Sources */ = {isa = PBXBuildFile; fileRef = 1458098724871D8700159CB8 /* time.c */; };
 		146A539223BBEB800000A06B /* ConfigObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 146A539123BBEB800000A06B /* ConfigObject.mm */; };
 		1482B1E923973F3E001BA513 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1482B1E823973F3E001BA513 /* AppDelegate.mm */; };
 		1482B1EB23973F42001BA513 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1482B1EA23973F42001BA513 /* Assets.xcassets */; };
@@ -688,10 +692,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14580A8F248886F100159CB8 /* stm32f2xx_hal_rcc.c in Sources */,
 				14580A8C2488461C00159CB8 /* quirks.c in Sources */,
 				14F2F96C23CA23F700169DD2 /* NSString+Extensions.m in Sources */,
 				14580A882488460900159CB8 /* dfuse_mem.c in Sources */,
 				1458093624834B8A00159CB8 /* hwversion.c in Sources */,
+				14580A91248886F900159CB8 /* stm32f2xx_hal_flash_ex.c in Sources */,
 				145809462486021F00159CB8 /* stm32f2xx_hal_flash.c in Sources */,
 				14F2F96523C94A4400169DD2 /* SCSI2SDTask.mm in Sources */,
 				141C5F74247F11B300CB8719 /* hid.c in Sources */,
@@ -703,8 +709,10 @@
 				141C5F71247F11A500CB8719 /* hidpacket.c in Sources */,
 				1458098B24871E2600159CB8 /* system_stm32f2xx.c in Sources */,
 				14F2F96B23CA23F000169DD2 /* Functions.mm in Sources */,
+				14580A92248887BB00159CB8 /* time.c in Sources */,
 				14580A8A2488461000159CB8 /* lib_main.c in Sources */,
 				141C5F72247F11A900CB8719 /* Dfu.cc in Sources */,
+				14580A90248886F500159CB8 /* stm32f2xx_hal_cortex.c in Sources */,
 				14580A892488460C00159CB8 /* dfuse.c in Sources */,
 				14D96BCF23C935330008E7B3 /* main.mm in Sources */,
 				14580A85248845FC00159CB8 /* dfu_load.c in Sources */,
@@ -849,7 +857,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
-				CODE_SIGN_ENTITLEMENTS = "SCSI2SD-util/SCSI2SD-util-v6.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "SCSI2SD-util/SCSI2SD_util-v6.entitlements";
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -895,7 +903,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
-				CODE_SIGN_ENTITLEMENTS = "SCSI2SD-util/SCSI2SD-util-v6.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "SCSI2SD-util/SCSI2SD_util-v6.entitlements";
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
