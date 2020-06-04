@@ -20,6 +20,9 @@
 
 #include <limits.h>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit"
+
 uint32_t s2s_systickConfig;
 
 void s2s_timeInit()
@@ -81,3 +84,4 @@ void s2s_delay_clocks(uint32_t delay)
 	}
 }
 
+#pragma GCC diagnostic pop

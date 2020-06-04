@@ -141,7 +141,7 @@ static __IO uint32_t uwTick;
              peripheral ISR process, the Tick interrupt line must have higher priority 
             (numerically lower) than the peripheral interrupt. Otherwise the caller 
             ISR process will be blocked. 
-       (++) functions affecting time base configurations are declared as __weak  
+       (++) functions affecting time base configurations are declared as
              to make  override possible  in case of other  implementations in user file.
 @endverbatim
   * @{
@@ -226,7 +226,7 @@ HAL_StatusTypeDef HAL_DeInit(void)
   * @brief  Initializes the MSP.
   * @retval None
   */
-__weak void HAL_MspInit(void)
+void HAL_MspInit(void)
 {
   /* NOTE : This function Should not be modified, when the callback is needed,
             the HAL_MspInit could be implemented in the user file
@@ -237,7 +237,7 @@ __weak void HAL_MspInit(void)
   * @brief  DeInitializes the MSP.
   * @retval None
   */
-__weak void HAL_MspDeInit(void)
+void HAL_MspDeInit(void)
 {
   /* NOTE : This function Should not be modified, when the callback is needed,
             the HAL_MspDeInit could be implemented in the user file
@@ -260,7 +260,7 @@ __weak void HAL_MspDeInit(void)
   * @param TickPriority: Tick interrupt priority.
   * @retval HAL status
   */
-__weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
+HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 {
   /*Configure the SysTick to have interrupt in 1ms time basis*/
   HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
@@ -308,7 +308,7 @@ __weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   *      implementations in user file.
   * @retval None
   */
-__weak void HAL_IncTick(void)
+void HAL_IncTick(void)
 {
   uwTick++;
 }
@@ -319,7 +319,7 @@ __weak void HAL_IncTick(void)
   *       implementations in user file.
   * @retval tick value
   */
-__weak uint32_t HAL_GetTick(void)
+uint32_t HAL_GetTick(void)
 {
   return uwTick;
 }
@@ -335,7 +335,7 @@ __weak uint32_t HAL_GetTick(void)
   * @param Delay: specifies the delay time length, in milliseconds.
   * @retval None
   */
-__weak void HAL_Delay(__IO uint32_t Delay)
+void HAL_Delay(__IO uint32_t Delay)
 {
   uint32_t tickstart = 0;
   tickstart = HAL_GetTick();
@@ -350,11 +350,11 @@ __weak void HAL_Delay(__IO uint32_t Delay)
   *       used to generate interrupts at regular time intervals. Once HAL_SuspendTick()
   *       is called, the SysTick interrupt will be disabled and so Tick increment 
   *       is suspended.
-  * @note This function is declared as __weak to be overwritten in case of other
+  * @note This function is declared as to be overwritten in case of other
   *       implementations in user file.
   * @retval None
   */
-__weak void HAL_SuspendTick(void)
+void HAL_SuspendTick(void)
 {
   /* Disable SysTick Interrupt */
   SysTick->CTRL &= ~SysTick_CTRL_TICKINT_Msk;
@@ -366,11 +366,11 @@ __weak void HAL_SuspendTick(void)
   *       used to generate interrupts at regular time intervals. Once HAL_ResumeTick()
   *       is called, the SysTick interrupt will be enabled and so Tick increment 
   *       is resumed.
-  * @note This function is declared as __weak to be overwritten in case of other
+  * @note This function is declared as to be overwritten in case of other
   *       implementations in user file.
   * @retval None
   */
-__weak void HAL_ResumeTick(void)
+void HAL_ResumeTick(void)
 {
   /* Enable SysTick Interrupt */
   SysTick->CTRL  |= SysTick_CTRL_TICKINT_Msk;

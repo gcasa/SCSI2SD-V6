@@ -36,6 +36,12 @@
 #define PROGRESS_BAR_WIDTH 25
 #define STDIN_CHUNK_SIZE 65536
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit"
+
 static const unsigned long crc32_table[] = {
     0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
     0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,
@@ -446,3 +452,6 @@ void show_suffix_and_prefix(struct dfu_file *file)
 		dfu_printf("CRC:\t\t0x%08X\n", file->dwCRC);
 	}
 }
+
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic pop

@@ -43,6 +43,12 @@
 #include "dfuse.h"
 #include "quirks.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit"
+
 int verbose = 0;
 
 struct dfu_if *dfu_root = NULL;
@@ -639,8 +645,11 @@ status_again:
 		/* open for "exclusive" writing */
 		fd = open(file.name, O_WRONLY | O_BINARY | O_CREAT | O_EXCL | O_TRUNC, 0666);
 		if (fd < 0)
-			err(EX_IOERR, "Cannot open file %s for writing", file.name);
-
+        {
+			// err(EX_IOERR, "Cannot open file %s for writing", file.name);
+            dfu_printf("Cannot open file %s for writing", file.name);
+            return 0;
+        }
 		if (dfuse_device || dfuse_options) {
 		    if (dfuse_do_upload(dfu_root, transfer_size, fd,
 					dfuse_options) < 0)
@@ -665,19 +674,28 @@ status_again:
 		     (file.idProduct != 0xffff && file.idProduct != runtime_product)) &&
 		    ((file.idVendor  != 0xffff && file.idVendor  != dfu_root->vendor) ||
 		     (file.idProduct != 0xffff && file.idProduct != dfu_root->product))) {
-			errx(EX_IOERR, "Error: File ID %04x:%04x does "
-				"not match device (%04x:%04x or %04x:%04x)",
-				file.idVendor, file.idProduct,
-				runtime_vendor, runtime_product,
-				dfu_root->vendor, dfu_root->product);
+			//errx(EX_IOERR, "Error: File ID %04x:%04x does "
+			//	"not match device (%04x:%04x or %04x:%04x)",
+			//	file.idVendor, file.idProduct,
+			//	runtime_vendor, runtime_product,
+			//	dfu_root->vendor, dfu_root->product);
+            dfu_printf("Error: File ID %04x:%04x does "
+                "not match device (%04x:%04x or %04x:%04x)",
+                file.idVendor, file.idProduct,
+                runtime_vendor, runtime_product,
+                dfu_root->vendor, dfu_root->product);
+            return 0;
 		}
 		if (dfuse_device || dfuse_options || file.bcdDFU == 0x11a) {
 		        if (dfuse_do_dnload(dfu_root, transfer_size, &file,
 							dfuse_options) < 0)
-				exit(1);
+				return 1;
 		} else {
 			if (dfuload_do_dnload(dfu_root, transfer_size, &file) < 0)
-				exit(1);
+            {
+                // exit(1);
+                return 1;
+            }
 	 	}
 		break;
 	case MODE_DETACH:
@@ -709,3 +727,6 @@ status_again:
 
 	return (0);
 }
+
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
