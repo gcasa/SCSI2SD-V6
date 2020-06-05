@@ -48,6 +48,7 @@ enum prefix_type {
 
 extern int verbose;
 
+int dfu_add_to_buf(unsigned char *outbuf, unsigned char *inbuf, int pos, int size);
 void dfu_load_file(struct dfu_file *file, enum suffix_req check_suffix, enum prefix_req check_prefix);
 void dfu_store_file(struct dfu_file *file, int write_suffix, int write_prefix);
 

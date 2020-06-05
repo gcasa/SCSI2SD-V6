@@ -291,7 +291,7 @@ int dfuse_dnload_chunk(struct dfu_if *dif, unsigned char *data, int size,
 	return bytes_sent;
 }
 
-int dfuse_do_upload(struct dfu_if *dif, int xfer_size, int fd,
+int dfuse_do_upload(struct dfu_if *dif, int xfer_size, unsigned char *abuf,
 		    const char *dfuse_options)
 {
 	int total_bytes = 0;
@@ -349,7 +349,8 @@ int dfuse_do_upload(struct dfu_if *dif, int xfer_size, int fd,
 			goto out_free;
 		}
 
-		dfu_file_write_crc(fd, 0, buf, rc);
+		// dfu_file_write_crc(fd, 0, buf, rc);
+        dfu_add_to_buf(abuf, buf, total_bytes, xfer_size);
 		total_bytes += rc;
 
 		if (total_bytes < 0)
@@ -360,10 +361,10 @@ int dfuse_do_upload(struct dfu_if *dif, int xfer_size, int fd,
 			ret = total_bytes;
 			break;
 		}
-		dfu_progress_bar("Upload", total_bytes, upload_limit);
+		// dfu_progress_bar("Upload", total_bytes, upload_limit);
 	}
 
-	dfu_progress_bar("Upload", total_bytes, total_bytes);
+	// dfu_progress_bar("Upload", total_bytes, total_bytes);
 
 	dfu_abort_to_idle(dif);
 	if (dfuse_leave) {

@@ -24,7 +24,7 @@ NSString *dfuProgressNotification = @"DFUProgressNotification";
 
 extern "C" {
 
-int dfu_util(int argc, char **argv); // our one and only interface with the dfu library...
+int dfu_util(int argc, char **argv, unsigned char *buf); // our one and only interface with the dfu library...
 
 void dfu_printf(char *format, ...)
 {
@@ -191,6 +191,17 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
                            withObject:formatString
                         waitUntilDone:YES];
     va_end(args);
+}
+
+
+- (void) showWrongFilenamePanel: (id)sender
+{
+    NSAlert *alert = [[NSAlert alloc] init];
+
+    [self hideProgress:self];
+    alert.messageText = @"Wrong filename";
+    alert.informativeText = @"Firmware does not match device hardware";
+    [alert runModal];
 }
 
 // Start polling for the device...
@@ -797,13 +808,20 @@ out:
     NSArray *commandArray = [cmdString componentsSeparatedByString: @" "];
     char **array = convertNSArrayToCArray(commandArray);
     int count = (int)[commandArray count];
-    if (dfu_util(count, array) == 0)
-        return NO;
+    unsigned char *buf = NULL;
     
-    NSData *fileData = [NSData dataWithContentsOfFile:tmpFile];
-    if (fileData != nil)
+    buf = (unsigned char *)calloc(0x4000, sizeof(unsigned char));
+    // unsigned char buf[0x80000]; // alloc 512k
+    if (dfu_util(count, array, buf) == 0)
     {
-        const uint8_t *data = (const uint8_t *)[fileData bytes];
+        free(buf);
+        return NO;
+    }
+    
+    // NSData *fileData = [NSData dataWithContentsOfFile:tmpFile];
+    if (buf != NULL)
+    {
+        const uint8_t *data = (const uint8_t *)buf;
         uint32_t value =
             (((uint32_t)(data[0]))) |
             (((uint32_t)(data[1])) << 8) |
@@ -834,6 +852,8 @@ out:
             return NO; // Some unknown version.
         }
     }
+    
+    free(buf);  // release the memory...
     return NO;
 }
 
@@ -864,14 +884,11 @@ out:
                 std::string fn = std::string([filename cStringUsingEncoding:NSUTF8StringEncoding]);
                 if (!myHID->isCorrectFirmware(fn))
                 {
-                    NSAlert *alert = [[NSAlert alloc] init];
-
                     [self hideProgress:self];
 
-                    alert.messageText = @"Wrong filename!";
-                    alert.informativeText = @"Firmware does not match device hardware!";
-                    [alert runModal];
-                    return;
+                    [self performSelectorOnMainThread:@selector(showWrongFilenamePanel:)
+                                           withObject:self
+                                        waitUntilDone:YES];
                 }
                 versionChecked = true;
                 // versionChecked = false; // for testing...
@@ -882,17 +899,13 @@ out:
 
             if (myDfu.hasDevice() && !versionChecked)
             {
-                [self logStringToPanel:@"STM DFU Bootloader found, checking compatibility"];
+                 [self logStringToPanel:@"STM DFU Bootloader found, checking compatibility"];
                 // [self updateProgress:[NSNumber numberWithFloat:0.0]];
                 if (![self checkVersionMarker: filename])
                 {
-                    NSAlert *alert = [[NSAlert alloc] init];
-
-                    [self hideProgress:self];
-                    alert.messageText = @"Wrong filename";
-                    alert.informativeText = @"Firmware does not match device hardware";
-                    [alert runModal];
-                    return;
+                    [self performSelectorOnMainThread:@selector(showWrongFilenamePanel:)
+                                           withObject:self
+                                        waitUntilDone:YES];
                 }
                 versionChecked = true;
             }
@@ -905,7 +918,7 @@ out:
                 NSArray *commandArray = [commandString componentsSeparatedByString: @" "];
                 char **array = convertNSArrayToCArray(commandArray);
                 int count = (int)[commandArray count];
-                dfu_util(count, array);
+                dfu_util(count, array, NULL);
                 [self performSelectorOnMainThread:@selector(reset_hid)
                                        withObject:nil
                                     waitUntilDone:YES];

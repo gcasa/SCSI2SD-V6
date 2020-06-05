@@ -41,7 +41,7 @@
 #include "quirks.h"
 
 int dfuload_do_upload(struct dfu_if *dif, int xfer_size,
-    int expected_size, int fd)
+    int expected_size, unsigned char *abuf)
 {
 	int total_bytes = 0;
 	unsigned short transaction = 0;
@@ -63,7 +63,8 @@ int dfuload_do_upload(struct dfu_if *dif, int xfer_size,
 			break;
 		}
 
-		dfu_file_write_crc(fd, 0, buf, rc);
+		//dfu_file_write_crc(fd, 0, buf, rc);
+        dfu_add_to_buf(abuf, buf, total_bytes, xfer_size);
 		total_bytes += rc;
 
 		if (total_bytes < 0)

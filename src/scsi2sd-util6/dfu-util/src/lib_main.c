@@ -232,7 +232,7 @@ static struct option opts[] = {
 	{ 0, 0, 0, 0 }
 };
 
-int dfu_util(int argc, char **argv)
+int dfu_util(int argc, char **argv, unsigned char *buf)
 {
 	int expected_size = 0;
 	unsigned int transfer_size = 0;
@@ -643,15 +643,15 @@ status_again:
 	switch (mode) {
 	case MODE_UPLOAD:
 		/* open for "exclusive" writing */
-		fd = open(file.name, O_WRONLY | O_BINARY | O_CREAT | O_EXCL | O_TRUNC, 0666);
+        /* fd = open(file.name, O_WRONLY | O_BINARY | O_CREAT | O_EXCL | O_TRUNC, 0666);
 		if (fd < 0)
         {
 			// err(EX_IOERR, "Cannot open file %s for writing", file.name);
             dfu_printf("Cannot open file %s for writing", file.name);
             return 0;
-        }
+        }*/
 		if (dfuse_device || dfuse_options) {
-		    if (dfuse_do_upload(dfu_root, transfer_size, fd,
+		    if (dfuse_do_upload(dfu_root, transfer_size, buf,
 					dfuse_options) < 0)
 		    {
 		    	dfu_printf("Could not perform upload from device");
@@ -660,7 +660,7 @@ status_again:
 		    }
 		} else {
 		    if (dfuload_do_upload(dfu_root, transfer_size,
-			expected_size, fd) < 0) {
+			expected_size, buf) < 0) {
 		    	dfu_printf("Could not perform upload from device");
 				// exit(1);
 				return 0;		    	
@@ -725,7 +725,7 @@ status_again:
 	dfu_root->dev_handle = NULL;
 	libusb_exit(ctx);
 
-	return (0);
+	return (1);
 }
 
 #pragma GCC diagnostic pop
