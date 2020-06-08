@@ -418,14 +418,21 @@ static uint64_t parseInt(NSXMLNode* node, uint64_t limit)
 	s >> result;
 	if (!s)
 	{
-		throw std::runtime_error("Invalid value");
+		// throw std::runtime_error("Invalid value");
+        NSString *msg = [NSString stringWithFormat: @"Invalid value, setting to limit %llu",limit];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"DFUOutputNotification" object:msg userInfo:nil];
+        result = limit;
 	}
 
 	if (result > limit)
 	{
-		std::stringstream msg;
-        msg << "Invalid value";
-		throw std::runtime_error(msg.str());
+		// std::stringstream msg;
+        // msg << "Invalid value";
+		// throw std::runtime_error(msg.str());
+        // dfu_print("%s\n",msg);
+        NSString *msg = [NSString stringWithFormat: @"Invalid value, setting to limit %llu",limit];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"DFUOutputNotification" object:msg userInfo:nil];
+        result = limit;
 	}
 	return result;
 }
