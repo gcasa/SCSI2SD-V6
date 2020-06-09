@@ -462,7 +462,9 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
             if (myHID)
             {
                 [self logStringToLabel: @"SCSI2SD Ready, firmware version %s", myHID->getFirmwareVersionStr().c_str()];
-
+                [self logStringToPanel: @"SCSI2SD Ready, firmware version %s\n", myHID->getFirmwareVersionStr().c_str()];
+                [self logStringToPanel: @"Hardware version: %s\n", myHID->getHardwareVersion().c_str()];
+                [self logStringToPanel: @"Serial Number: %s\n", myHID->getSerialNumber().c_str()];
                 std::vector<uint8_t> csd(myHID->getSD_CSD());
                 std::vector<uint8_t> cid(myHID->getSD_CID());
                 [self logStringToPanel: @"SD Capacity (512-byte sectors): %d\n", myHID->getSDCapacity()];
@@ -477,6 +479,7 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
                 {
                     [self logStringToPanel: @"%0X", static_cast<int>(cid[i])];
                 }
+                [self logStringToPanel: @"\n"];
 
                 if ([[self scsiSelfTest] state] == NSControlStateValueOn)
                 {

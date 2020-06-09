@@ -126,8 +126,11 @@ char** convertNSArrayToCArrayForMain(NSArray *array)
         myHID.reset(SCSI2SD::HID::Open());
         if(myHID)
         {
-            NSString *msg = [NSString stringWithFormat: @"SCSI2SD Ready, firmware version %s",myHID->getFirmwareVersionStr().c_str()];
+            NSString *msg = [NSString stringWithFormat: @"SCSI2SD Ready, firmware version %s\n",myHID->getFirmwareVersionStr().c_str()];
             [self logStringToPanel: msg];
+            [self logStringToPanel: @"SCSI2SD Ready, firmware version %s\n", myHID->getFirmwareVersionStr().c_str()];
+            [self logStringToPanel: @"Hardware version: %s\n", myHID->getHardwareVersion().c_str()];
+            [self logStringToPanel: @"Serial Number: %s\n", myHID->getSerialNumber().c_str()];
         }
         
         // myDfu = new SCSI2SD::Dfu;
@@ -187,7 +190,8 @@ char** convertNSArrayToCArrayForMain(NSArray *array)
             if (myHID)
             {
                 [self logStringToPanel: @"SCSI2SD Ready, firmware version %s\n", myHID->getFirmwareVersionStr().c_str()];
-
+                [self logStringToPanel: @"Hardware version: %s\n", myHID->getHardwareVersion().c_str()];
+                [self logStringToPanel: @"Serial Number: %s\n", myHID->getSerialNumber().c_str()];
                 std::vector<uint8_t> csd(myHID->getSD_CSD());
                 std::vector<uint8_t> cid(myHID->getSD_CID());
                 [self logStringToPanel: @"SD Capacity (512-byte sectors): %d\n", myHID->getSDCapacity()];
