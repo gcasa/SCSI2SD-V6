@@ -14,15 +14,17 @@ int main(int argc, const char * argv[]) {
         NSProcessInfo *info = [NSProcessInfo processInfo];
         SCSI2SDTask *task = [SCSI2SDTask task];
         // NSMutableArray *arguments = @[@"", @"-l", @"/Users/heron/config.xml"];
-        NSMutableArray *arguments = [[NSMutableArray alloc] initWithObjects: @"", @"-r", @"-f", @"/Users/heron/Downloads/firmware.dfu", nil];
-        // NSMutableArray *arguments = [[NSMutableArray alloc] initWithArray:info.arguments];
+        NSString *exec = [[info arguments] objectAtIndex: 0];
+        NSMutableArray *arguments = [[NSMutableArray alloc] initWithArray:info.arguments]; //[[NSMutableArray alloc] initWithObjects: exec, @"-r", @"-f", @"/Users/heron/Downloads/firmware.dfu", nil];
         BOOL parseSuccessful = NO;
         BOOL repeatMode = NO;
 
-        puts("=== SCSI2SD-v6-util-cli utility v1.0 ===");
+        puts("=== SCSI2SD-util-V6-cli utility v1.0 ===");
 
+        NSLog(@"count == %ld", [arguments count]);
         if([arguments count] == 4)
         {
+            NSLog(@"In here %@", arguments);
             NSUInteger indx = [arguments indexOfObject: @"-r"];
             if(indx != NSNotFound)
             {
@@ -31,19 +33,16 @@ int main(int argc, const char * argv[]) {
                 task.repeatMode = YES;
             }
         }
+        else
+        {
+            repeatMode = NO;
+            task.repeatMode = NO;
+        }
         
         if([arguments count] == 3) // arguments includes the command...
         {
             do
             {
-                if (repeatMode)
-                {
-                    [task waitForHidConnection];
-                    while( [task getHid] ); // wait to get connection...
-
-                    [task runScsiSelfTest];
-                }
-                
                 NSString *filename = [arguments objectAtIndex: 2];
                 const char *f = (const char *)[filename cStringUsingEncoding:NSUTF8StringEncoding];
                 if([[arguments objectAtIndex:1] isEqualToString:@"-s"])
@@ -63,8 +62,22 @@ int main(int argc, const char * argv[]) {
                 {
                     printf("Loading firmware from filesystem to device: %s\n", f);
                     parseSuccessful = YES;
-                    [task upgradeFirmwareDeviceFromFilename:filename];
+                    if (repeatMode == NO)
+                    {
+                        printf("Here....");
+                        [task upgradeFirmwareDeviceFromFilename:filename];
+                    }
+                    else
+                    {
+                        NSString *tool = [arguments objectAtIndex: 0];
+                        NSString *opt = [arguments objectAtIndex:1];
+                        NSString *file = [arguments objectAtIndex:2];
+                        const char *cmd = [[NSString stringWithFormat:@"%@ %@ %@", tool, opt, file] cStringUsingEncoding:NSUTF8StringEncoding];
+                        printf("Ugh!@!");
+                        system(cmd);
+                    }
                 }
+                
                 puts("\n=== Operation completed.");
                 if(repeatMode == YES)
                 {

@@ -1040,7 +1040,6 @@ out:
 - (void) evaluate
 {
     BOOL valid = YES;
-    NSUInteger size = myHID->getSDCapacity();
     
     // Check for duplicate SCSI IDs
     std::vector<uint8_t> enabledID;
@@ -1104,10 +1103,14 @@ out:
             
             if (valid)
             {
-                if (total > size - 2) // if total sectors invades the config area...
+                if (myHID)
                 {
-                    valid = false;
-                    [self logStringToPanel:@"Total sectors invades config area."];
+                    NSUInteger size = myHID->getSDCapacity();  // get the number of sectors...
+                    if (total > size - 2) // if total sectors invades the config area...
+                    {
+                        valid = false;
+                        [self logStringToLabel: @"Sectors exceed device size"];
+                    }
                 }
             }
             // sdSectors.push_back(sdSectorRange);

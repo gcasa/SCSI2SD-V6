@@ -507,7 +507,7 @@ out:
             if (myHID)
             {
                 serial = myHID->getSerialNumber().c_str();
-
+                [self runScsiSelfTest];  // run the scsi self test when updating the firmware.
                 std::string fn = std::string([filename cStringUsingEncoding:NSUTF8StringEncoding]);
                 if (!myHID->isCorrectFirmware(fn))
                 {
@@ -539,7 +539,7 @@ out:
             {
                 [self logStringToPanel: @"\n\nSTM DFU Bootloader found\n"];
                 NSString *dfuPath = [[NSBundle mainBundle] pathForResource:@"dfu-util" ofType:@""];
-                NSString *commandString = [NSString stringWithFormat:@"%@ -D %@ -a 0 -R -s %s", [dfuPath lastPathComponent], filename, serial];
+                NSString *commandString = [NSString stringWithFormat:@"%@ -D %@ -a 0 -R" /*-s %s"*/, [dfuPath lastPathComponent], filename]; //, serial];
                 NSArray *commandArray = [commandString componentsSeparatedByString: @" "];
                 char **array = convertNSArrayToCArray(commandArray);
                 int count = (int)[commandArray count];
