@@ -206,6 +206,7 @@ char** convertNSArrayToCArrayForMain(NSArray *array)
                 {
                     [self logStringToPanel: @"%0X", static_cast<int>(cid[i])];
                 }
+                [self logStringToPanel:@"\n"];
                 gotHID = YES;
             }
             else
@@ -231,6 +232,21 @@ char** convertNSArrayToCArrayForMain(NSArray *array)
     {
         // nothing to do...
     }
+}
+
+- (void) runScsiSelfTest
+{
+    int errcode;
+    [self logStringToPanel: @"SCSI Self-Test: "];
+    if (myHID->scsiSelfTest(errcode))
+    {
+        [self logStringToPanel: @"Passed"];
+    }
+    else
+    {
+        [self logStringToPanel: @"FAIL (%d)", errcode];
+    }
+    [self logStringToPanel:@"\n"];
 }
 
 - (void)saveConfigs: (std::pair<S2S_BoardCfg, std::vector<S2S_TargetCfg>>)configs
@@ -481,13 +497,17 @@ out:
     }
     
     BOOL versionChecked = NO;
+
     while (true)
     {
         try
         {
+            const char *serial = NULL;
             if (!myHID) myHID.reset(SCSI2SD::HID::Open());
             if (myHID)
             {
+                serial = myHID->getSerialNumber().c_str();
+
                 std::string fn = std::string([filename cStringUsingEncoding:NSUTF8StringEncoding]);
                 if (!myHID->isCorrectFirmware(fn))
                 {
@@ -519,11 +539,23 @@ out:
             {
                 [self logStringToPanel: @"\n\nSTM DFU Bootloader found\n"];
                 NSString *dfuPath = [[NSBundle mainBundle] pathForResource:@"dfu-util" ofType:@""];
-                NSString *commandString = [NSString stringWithFormat:@"%@ -D %@ -a 0 -R", [dfuPath lastPathComponent], filename];
+                NSString *commandString = [NSString stringWithFormat:@"%@ -D %@ -a 0 -R -s %s", [dfuPath lastPathComponent], filename, serial];
                 NSArray *commandArray = [commandString componentsSeparatedByString: @" "];
                 char **array = convertNSArrayToCArray(commandArray);
                 int count = (int)[commandArray count];
+                
+                // Load firmware...
                 dfu_util(count, array, NULL);
+
+                // Detach...
+                /*
+                commandString = [NSString stringWithFormat:@"%@ -e", [dfuPath lastPathComponent]];
+                commandArray = [commandString componentsSeparatedByString:@" "];
+                array = convertNSArrayToCArray(commandArray);
+                count = (int)[commandArray count];
+                dfu_util(count, array, NULL);
+                */
+                
                 [self performSelectorOnMainThread:@selector(reset_hid)
                                        withObject:nil
                                     waitUntilDone:YES];

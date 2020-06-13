@@ -404,44 +404,23 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     }
 }
 
-- (void) redirectDfuOutput
+- (void) runScsiSelfTest
 {
-    /*
-    if (myConsoleProcess)
+    int errcode;
+    [self logStringToPanel: @"SCSI Self-Test: "];
+    if (myHID->scsiSelfTest(errcode))
     {
-        std::stringstream ss;
-        while (myConsoleStderr && !myConsoleStderr->Eof() && myConsoleStderr->CanRead())
-        {
-            int c = myConsoleStderr->GetC();
-            if (c == '\n')
-            {
-                ss << "\r\n";
-            }
-            else if (c >= 0)
-            {
-                ss << (char) c;
-            }
-        }
-        while (myConsoleStdout && !myConsoleStdout->Eof() && myConsoleStdout->CanRead())
-        {
-            int c = myConsoleStdout->GetC();
-            if (c == '\n')
-            {
-                ss << "\r\n";
-            }
-            else if (c >= 0)
-            {
-                ss << (char) c;
-            }
-        }
-        myConsoleTerm->DisplayCharsUnsafe(ss.str());
-    }*/
+        [self logStringToPanel: @"Passed"];
+    }
+    else
+    {
+        [self logStringToPanel: @"FAIL (%d)", errcode];
+    }
 }
 
 // Periodically check to see if Device is present...
 - (void) doTimer
 {
-    [self redirectDfuOutput];
     [self logScsiData];
     time_t now = time(NULL);
     if (now == myLastPollTime) return;
@@ -483,16 +462,7 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
 
                 if ([[self scsiSelfTest] state] == NSControlStateValueOn)
                 {
-                    int errcode;
-                    [self logStringToPanel: @"SCSI Self-Test: "];
-                    if (myHID->scsiSelfTest(errcode))
-                    {
-                        [self logStringToPanel: @"Passed"];
-                    }
-                    else
-                    {
-                        [self logStringToPanel: @"FAIL (%d)", errcode];
-                    }
+                    [self runScsiSelfTest];
                 }
 
                 if (!myInitialConfig)
@@ -964,81 +934,6 @@ out:
 
 - (void)bootloaderUpdateThread: (NSString *)filename
 {
-    /*
-    NSData *fileData = [NSData dataWithContentsOfFile:filename];
-    NSUInteger len = [fileData length];
-    if (len != 0x2400)
-    {
-        NSLog(@"Incorrect size, invalid boodloader");
-        return;
-    }
-    
-    uint8_t *data = (uint8_t *)[fileData bytes];
-    static char magic[] = {
-        'P', 0, 'S', 0, 'o', 0, 'C', 0, '3', 0, ' ', 0,
-        'B', 0, 'o', 0, 'o', 0, 't', 0, 'l', 0, 'o', 0, 'a', 0, 'd', 0, 'e', 0, 'r', 0};
-    
-    uint8_t* dataEnd = data + sizeof(data);
-    if (std::search(data, dataEnd, magic, magic + sizeof(magic)) >= dataEnd)
-    {
-        [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                               withObject: [NSString stringWithFormat:@"\nNot a valid bootloader file: %@\n", filename]
-                            waitUntilDone: YES];
-        return;
-    }
-    
-    [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                           withObject: [NSString stringWithFormat:@"\nUpgrading bootloader from file: %@\n", filename]
-                        waitUntilDone: YES];
-
-    int currentProgress = 0;
-    int totalProgress = 36;
-    
-    for (size_t flashRow = 0; flashRow < 36; ++flashRow)
-    {
-        [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                               withObject: [NSString stringWithFormat:
-                                @"\nProgramming bootloader flash array 0 row %zu",
-                                flashRow]
-                            waitUntilDone: YES];
-        currentProgress += 1;
-        
-        if (currentProgress == totalProgress)
-        {
-            [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                   withObject: @"Programming bootloader complete"
-                                waitUntilDone: YES];
-        }
-        
-        uint8_t *rowData = data + (flashRow * 256);
-        std::vector<uint8_t> flashData(rowData, rowData + 256);
-        try
-        {
-            // self->myHID->writeFlashRow(0, (int)flashRow, flashData);
-        }
-        catch (std::runtime_error& e)
-        {
-            [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                                   withObject: [NSString stringWithFormat: @"%s", e.what()]
-                                waitUntilDone: YES];
-            goto err;
-        }
-    }
-    
-    goto out;
-    
-err:
-    [self performSelectorOnMainThread: @selector(logStringToPanel:)
-                           withObject: @"Programming bootloader failed"
-                        waitUntilDone: YES];
-    [self performSelectorOnMainThread:@selector(updateProgress:)
-                           withObject:[NSNumber numberWithDouble:100.0]
-                        waitUntilDone:NO];
-    goto out;
-    
-out:
-    return;
-*/
 }
 
 - (void) bootLoaderUpdateEnd: (NSOpenPanel *)panel
@@ -1145,7 +1040,8 @@ out:
 - (void) evaluate
 {
     BOOL valid = YES;
-
+    NSUInteger size = myHID->getSDCapacity();
+    
     // Check for duplicate SCSI IDs
     std::vector<uint8_t> enabledID;
 
@@ -1155,8 +1051,8 @@ out:
     bool isTargetEnabled = false; // Need at least one enabled
     for (size_t i = 0; i < [deviceControllers count]; ++i)
     {
-        DeviceController *target = [deviceControllers objectAtIndex: i]; //  getTargetConfig];
-    
+        DeviceController *target = [deviceControllers objectAtIndex: i];
+        
         // [target setAutoStartSectorValue: autoStartSector];
         valid = [target evaluate] && valid;
         if ([target isEnabled])
@@ -1183,6 +1079,8 @@ out:
             }
 
             NSRange sdSectorRange = [target getSDSectorRange];
+            NSUInteger total = 0;
+
             for (size_t k = 0; k < [deviceControllers count]; ++k)
             {
                 DeviceController *t3 = [deviceControllers objectAtIndex: k];
@@ -1199,6 +1097,17 @@ out:
                 {
                     valid = true;
                     [target setSDSectorOverlap: NO];
+                }
+                
+                total += sdr.length;
+            }
+            
+            if (valid)
+            {
+                if (total > size - 2) // if total sectors invades the config area...
+                {
+                    valid = false;
+                    [self logStringToPanel:@"Total sectors invades config area."];
                 }
             }
             // sdSectors.push_back(sdSectorRange);

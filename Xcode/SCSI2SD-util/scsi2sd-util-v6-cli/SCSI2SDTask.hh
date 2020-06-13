@@ -35,6 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void) saveFromDeviceToFilename: (NSString *)filename;
 - (void) saveToDeviceFromFilename: (NSString *)filename;
 - (void) upgradeFirmwareDeviceFromFilename: (NSString *)filename;
+- (void) runScsiSelfTest;
 
 @end
 

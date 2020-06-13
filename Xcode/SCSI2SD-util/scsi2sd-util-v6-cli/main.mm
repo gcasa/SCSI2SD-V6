@@ -14,7 +14,8 @@ int main(int argc, const char * argv[]) {
         NSProcessInfo *info = [NSProcessInfo processInfo];
         SCSI2SDTask *task = [SCSI2SDTask task];
         // NSMutableArray *arguments = @[@"", @"-l", @"/Users/heron/config.xml"];
-        NSMutableArray *arguments = [NSMutableArray arrayWithArray:info.arguments];
+        NSMutableArray *arguments = [[NSMutableArray alloc] initWithObjects: @"", @"-r", @"-f", @"/Users/heron/Downloads/firmware.dfu", nil];
+        // NSMutableArray *arguments = [[NSMutableArray alloc] initWithArray:info.arguments];
         BOOL parseSuccessful = NO;
         BOOL repeatMode = NO;
 
@@ -35,6 +36,14 @@ int main(int argc, const char * argv[]) {
         {
             do
             {
+                if (repeatMode)
+                {
+                    [task waitForHidConnection];
+                    while( [task getHid] ); // wait to get connection...
+
+                    [task runScsiSelfTest];
+                }
+                
                 NSString *filename = [arguments objectAtIndex: 2];
                 const char *f = (const char *)[filename cStringUsingEncoding:NSUTF8StringEncoding];
                 if([[arguments objectAtIndex:1] isEqualToString:@"-s"])
