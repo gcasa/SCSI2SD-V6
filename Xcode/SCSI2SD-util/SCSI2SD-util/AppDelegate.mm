@@ -836,6 +836,7 @@ out:
     if ([[filename pathExtension] isEqualToString: @"dfu"] == NO)
     {
         [self logStringToPanel: @"SCSI2SD-V6 requires .dfu extension"];
+        return;
     }
 
     [self.dfuPanel performSelectorOnMainThread: @selector( orderFrontRegardless )
@@ -862,6 +863,8 @@ out:
                     [self performSelectorOnMainThread:@selector(showWrongFilenamePanel:)
                                            withObject:self
                                         waitUntilDone:YES];
+                    [self logStringToPanel: @"Firmware does not match hardware"];
+                    return;
                 }
                 versionChecked = true;
                 // versionChecked = false; // for testing...
@@ -879,6 +882,8 @@ out:
                     [self performSelectorOnMainThread:@selector(showWrongFilenamePanel:)
                                            withObject:self
                                         waitUntilDone:YES];
+                    [self logStringToPanel: @"Firmware does not match hardware"];
+                    return;
                 }
                 versionChecked = true;
             }
