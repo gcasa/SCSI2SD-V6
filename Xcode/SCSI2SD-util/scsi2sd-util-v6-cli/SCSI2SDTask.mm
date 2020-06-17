@@ -494,6 +494,7 @@ out:
     if ([[filename pathExtension] isEqualToString: @"dfu"] == NO)
     {
         [self logStringToPanel: @"SCSI2SD-V6 requires .dfu extension"];
+        return;
     }
     
     BOOL versionChecked = NO;
