@@ -416,6 +416,7 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     {
         [self logStringToPanel: @"FAIL (%d)", errcode];
     }
+    [self logStringToPanel: @"\n"];
 }
 
 // Periodically check to see if Device is present...

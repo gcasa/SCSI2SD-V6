@@ -240,11 +240,11 @@ char** convertNSArrayToCArrayForMain(NSArray *array)
     [self logStringToPanel: @"SCSI Self-Test: "];
     if (myHID->scsiSelfTest(errcode))
     {
-        [self logStringToPanel: @"Passed"];
+        [self logStringToPanel: @"Passed\n"];
     }
     else
     {
-        [self logStringToPanel: @"FAIL (%d)", errcode];
+        [self logStringToPanel: @"FAIL (%d)\n", errcode];
     }
     [self logStringToPanel:@"\n"];
 }
