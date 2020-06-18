@@ -210,6 +210,26 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     [alert runModal];
 }
 
+- (void) showReadCompletionPanel: (id)sender
+{
+    NSAlert *alert = [[NSAlert alloc] init];
+
+    [self hideProgress:self];
+    alert.messageText = @"Operation Completed";
+    alert.informativeText = @"Configuration was read from device";
+    [alert runModal];
+}
+
+- (void) showWriteCompletionPanel: (id)sender
+{
+    NSAlert *alert = [[NSAlert alloc] init];
+
+    [self hideProgress:self];
+    alert.messageText = @"Operation Completed";
+    alert.informativeText = @"Configuration was written to device";
+    [alert runModal];
+}
+
 // Start polling for the device...
 - (void) startTimer
 {
@@ -684,6 +704,9 @@ out:
     [self performSelectorOnMainThread:@selector(startTimer)
                            withObject:NULL
                         waitUntilDone:NO];
+    [self performSelectorOnMainThread:@selector(showReadCompletionPanel:)
+                           withObject:nil
+                        waitUntilDone:NO];
     
     [aLock unlock];
     return;
@@ -770,7 +793,9 @@ out:
     [self performSelectorOnMainThread:@selector(startTimer)
                            withObject:NULL
                         waitUntilDone:NO];
-
+    [self performSelectorOnMainThread:@selector(showWriteCompletionPanel:)
+                           withObject:nil
+                        waitUntilDone:NO];
     [aLock unlock];
     return;
 }
