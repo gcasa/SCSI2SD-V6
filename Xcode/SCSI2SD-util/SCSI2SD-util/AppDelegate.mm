@@ -118,6 +118,7 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
 @property (nonatomic) IBOutlet NSMenuItem *scsiLogData;
 
 @property (nonatomic) IBOutlet SettingsController *settings;
+@property (weak) IBOutlet NSWindow *customAboutWindow;
 
 @end
 
@@ -139,6 +140,11 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
 - (void) hideProgress: (id)sender
 {
     [self.progress setHidden:YES];
+}
+
+- (IBAction)handleAboutPanel:(id)sender
+{
+    [self.customAboutWindow orderFrontRegardless];
 }
 
 - (void) outputToPanel: (NSString* )formatString
