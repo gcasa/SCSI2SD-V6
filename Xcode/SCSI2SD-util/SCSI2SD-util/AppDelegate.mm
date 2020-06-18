@@ -147,6 +147,30 @@ BOOL RangesIntersect(NSRange range1, NSRange range2) {
     [self.customAboutWindow orderFrontRegardless];
 }
 
+- (IBAction)handleLogPanel:(id)sender {
+    if ([self.logPanel isVisible])
+    {
+        [self.logPanel setIsVisible: NO];
+    }
+    else
+    {
+        [self.logPanel setIsVisible: YES];
+        [self.logPanel orderFrontRegardless];
+    }
+}
+
+- (IBAction)handleDFUPanel:(id)sender {
+    if ([self.dfuPanel isVisible])
+    {
+        [self.dfuPanel setIsVisible: NO];
+    }
+    else
+    {
+        [self.dfuPanel setIsVisible: YES];
+        [self.dfuPanel orderFrontRegardless];
+    }
+}
+
 - (void) outputToPanel: (NSString* )formatString
 {
     NSString *string = [self.logTextView string];
